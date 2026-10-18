@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Fare Checker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: #0b0f1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* Animated bg */
+        .glow { position: fixed; border-radius: 50%; filter: blur(140px); opacity: 0.18; pointer-events: none; }
+        .glow.a { width: 500px; height: 500px; top: -100px; left: -80px; background: #3b82f6; }
+        .glow.b { width: 400px; height: 400px; bottom: -80px; right: -60px; background: #8b5cf6; }
+        .glow.c { width: 300px; height: 300px; top: 40%; left: 60%; background: #06b6d4; opacity: 0.1; }
+
+        .wrapper {
+            width: 100%;
+            max-width: 520px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .header .plane {
+            font-size: 2.8rem;
+            margin-bottom: 8px;
+        }
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header p {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-top: 6px;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: rgba(30, 41, 59, 0.65);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(71, 85, 105, 0.35);
+            border-radius: 20px;
+            padding: 32px;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .full { grid-column: 1 / -1; }
+
+        .field {
+            margin-bottom: 16px;
+        }
+        .field label {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 6px;
+        }
+        .field select,
+        .field input {
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(71, 85, 105, 0.4);
+            background: rgba(15, 23, 42, 0.9);
+            color: #e2e8f0;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+        .field select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
+        }
+        .field select:focus,
+        .field input:focus {
+            outline: none;
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.12);
+        }
+
+        /* Button */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            margin-top: 6px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 35px rgba(59, 130, 246, 0.3);
+        }
+        .btn:active { transform: translateY(0); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        /* Result */
+        .result {
+            margin-top: 24px;
+            text-align: center;
+            display: none;
+            animation: fadeUp 0.4s ease;
+        }
+        .result.show { display: block; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.08), rgba(96, 165, 250, 0.08));
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            border-radius: 16px;
+            padding: 28px;
+        }
+        .result-route {
+            font-size: 0.82rem;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+        .result-price {
+            font-size: 3.2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #34d399, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+        .result-model {
+            font-size: 0.78rem;
+            color: #475569;
+            margin-top: 6px;
+        }
+
+        .compare {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 18px;
+        }
+        .compare-item {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 12px;
+            padding: 16px;
+        }
+        .compare-item .lbl {
+            font-size: 0.72rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .compare-item .val {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+        .green { color: #34d399; }
+        .red { color: #f87171; }
+
+        .premium {
+            margin-top: 14px;
+            font-size: 0.82rem;
+            color: #94a3b8;
+        }
+        .premium strong { color: #f87171; }
+
+        /* Spinner */
+        .spinner {
+            display: inline-block;
+            width: 18px; height: 18px;
+            border: 3px solid rgba(255,255,255,0.2);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 0.75rem;
+            color: #334155;
+        }
+
+        @media (max-width: 540px) {
+            .row { grid-template-columns: 1fr; }
+            .result-price { font-size: 2.4rem; }
+            .compare-item .val { font-size: 1.2rem; }
+            .form-card { padding: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="glow a"></div>
+<div class="glow b"></div>
+<div class="glow c"></div>
+
+<div class="wrapper">
+
+    <div class="header">
+        <div class="plane">✈️</div>
+        <h1>Flight Fare Checker</h1>
+        <p>Enter flight details to check the predicted ticket price</p>
+    </div>
+
+    <div class="form-card">
+        <form id="form" onsubmit="return predict(event)">
+
+            <div class="row">
+                <div class="field">
+                    <label>Airline</label>
+                    <select name="airline">
+                        <option value="Vistara">Vistara</option>
+                        <option value="Air_India">Air India</option>
+                        <option value="Indigo" selected>Indigo</option>
+                        <option value="GO_FIRST">GO FIRST</option>
+                        <option value="SpiceJet">SpiceJet</option>
+                        <option value="AirAsia">AirAsia</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Class</label>
+                    <select name="ticket_class">
+                        <option value="0">Economy</option>
+                        <option value="1">Business</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <label>From</label>
+                    <select name="source_city">
+                        <option value="Delhi" selected>Delhi</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Bangalore">Bangalore</option>
+                        <option value="Kolkata">Kolkata</option>
+                        <option value="Hyderabad">Hyderabad</option>
+                        <option value="Chennai">Chennai</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>To</label>
+                    <select name="destination_city">
+                        <option value="Mumbai" selected>Mumbai</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Bangalore">Bangalore</option>
+                        <option value="Kolkata">Kolkata</option>
+                        <option value="Hyderabad">Hyderabad</option>
+                        <option value="Chennai">Chennai</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <label>Departure</label>
+                    <select name="departure_time">
+                        <option value="Morning" selected>Morning</option>
+                        <option value="Early_Morning">Early Morning</option>
+                        <option value="Afternoon">Afternoon</option>
+                        <option value="Evening">Evening</option>
+                        <option value="Night">Night</option>
+                        <option value="Late_Night">Late Night</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Arrival</label>
+                    <select name="arrival_time">
+                        <option value="Afternoon" selected>Afternoon</option>
+                        <option value="Early_Morning">Early Morning</option>
+                        <option value="Morning">Morning</option>
+                        <option value="Evening">Evening</option>
+                        <option value="Night">Night</option>
+                        <option value="Late_Night">Late Night</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <label>Stops</label>
+                    <select name="stops">
+                        <option value="0" selected>Non-Stop</option>
+                        <option value="1">1 Stop</option>
+                        <option value="2">2+ Stops</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Duration (hrs)</label>
+                    <input type="number" name="duration" value="2.25" min="0.5" max="50" step="0.25">
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Days before departure</label>
+                <input type="range" name="days_left" id="daysRange" min="1" max="49" value="15"
+                       oninput="document.getElementById('daysVal').textContent=this.value+' days'"
+                       style="width:100%;accent-color:#60a5fa;height:6px;cursor:pointer;background:transparent;">
+                <div style="display:flex;justify-content:space-between;margin-top:6px;">
+                    <span style="font-size:0.72rem;color:#475569;">1 day</span>
+                    <span id="daysVal" style="font-size:0.85rem;color:#60a5fa;font-weight:700;">15 days</span>
+                    <span style="font-size:0.72rem;color:#475569;">49 days</span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn" id="btn">Check Price</button>
+        </form>
+
+        <div class="result" id="result">
+            <div class="result-card">
+                <div class="result-route" id="rRoute"></div>
+                <div class="result-price" id="rPrice"></div>
+                <div class="result-model">Predicted by Random Forest (R² = 98.56%)</div>
+
+                <div class="compare">
+                    <div class="compare-item">
+                        <div class="lbl">Your booking</div>
+                        <div class="val green" id="rAdvance"></div>
+                    </div>
+                    <div class="compare-item">
+                        <div class="lbl">Last minute (2 days)</div>
+                        <div class="val red" id="rLate"></div>
+                    </div>
+                </div>
+                <div class="premium" id="rDiff"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>Flight Fare Prediction &middot; ML Project &middot; Karthik KS</footer>
+</div>
+
+<script>
+function predict(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btn');
+    btn.innerHTML = '<span class="spinner"></span>Checking...';
+    btn.disabled = true;
+
+    const fd = new FormData(document.getElementById('form'));
+
+    fetch('/predict', { method: 'POST', body: fd })
+    .then(r => r.json())
+    .then(d => {
+        btn.innerHTML = 'Check Price';
+        btn.disabled = false;
+        if (d.success) {
+            document.getElementById('result').className = 'result show';
+            document.getElementById('rRoute').textContent = d.airline + ' · ' + d.route + ' · ' + d.class;
+            document.getElementById('rPrice').textContent = '\u20B9' + d.predicted_price.toLocaleString('en-IN');
+            document.getElementById('rAdvance').textContent = '\u20B9' + d.predicted_price.toLocaleString('en-IN');
+            document.getElementById('rLate').textContent = '\u20B9' + d.late_price.toLocaleString('en-IN');
+            if (d.difference > 0) {
+                document.getElementById('rDiff').innerHTML = 'Last-minute premium: <strong>+\u20B9' + d.difference.toLocaleString('en-IN') + '</strong>';
+            } else {
+                document.getElementById('rDiff').innerHTML = 'Advance booking saves: <strong style="color:#34d399;">\u20B9' + Math.abs(d.difference).toLocaleString('en-IN') + '</strong>';
+            }
+        } else {
+            alert('Error: ' + d.error);
+        }
+    })
+    .catch(err => {
+        btn.innerHTML = 'Check Price';
+        btn.disabled = false;
+        alert('Connection error');
+    });
+}
+</script>
+</body>
+</html>

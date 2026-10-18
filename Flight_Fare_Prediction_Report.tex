@@ -1,0 +1,1188 @@
+% ============================================================================
+% FLIGHT FARE PREDICTION — Complete LaTeX Report
+% ICFOSS Machine Learning Internship — Final Project Report
+% Author: Karthik KS
+% ============================================================================
+
+\documentclass[12pt, a4paper]{article}
+
+% ── Packages ────────────────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+\usepackage{soul}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% ── Rupee Symbol ───────────────────────────────────────────────────────────
+\newcommand{\rupee}{\text{₹}}
+
+% ── Color Definitions ──────────────────────────────────────────────────────
+\definecolor{icfossblue}{RGB}{41, 98, 255}
+\definecolor{icfossgreen}{RGB}{16, 185, 129}
+\definecolor{darkbg}{RGB}{30, 41, 59}
+\definecolor{highlight}{RGB}{255, 193, 7}
+\definecolor{codebg}{RGB}{245, 245, 245}
+\definecolor{codegreen}{RGB}{0,128,0}
+\definecolor{codegray}{RGB}{128,128,128}
+\definecolor{codeblue}{RGB}{0,0,200}
+\definecolor{alertred}{RGB}{220, 53, 69}
+\definecolor{successgreen}{RGB}{40, 167, 69}
+
+% ── Hyperlink Setup ────────────────────────────────────────────────────────
+\hypersetup{
+    colorlinks=true,
+    linkcolor=icfossblue,
+    urlcolor=icfossblue,
+    citecolor=icfossblue,
+    pdftitle={Flight Fare Prediction - ICFOSS ML Internship},
+    pdfauthor={Karthik KS}
+}
+
+% ── Code Listing Style ─────────────────────────────────────────────────────
+\lstdefinestyle{pythonstyle}{
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{codeblue}\bfseries,
+    commentstyle=\color{codegreen}\itshape,
+    stringstyle=\color{alertred},
+    numberstyle=\tiny\color{codegray},
+    numbers=left,
+    numbersep=8pt,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{codegray},
+    tabsize=4,
+    showstringspaces=false,
+    language=Python
+}
+
+% ── Custom Boxes ───────────────────────────────────────────────────────────
+\newtcolorbox{keyterm}{
+    colback=icfossblue!8,
+    colframe=icfossblue,
+    fonttitle=\bfseries,
+    title=Key Term,
+    sharp corners,
+    boxrule=1pt
+}
+
+\newtcolorbox{importantbox}{
+    colback=alertred!8,
+    colframe=alertred,
+    fonttitle=\bfseries,
+    title=Important,
+    sharp corners,
+    boxrule=1pt
+}
+
+\newtcolorbox{insightbox}{
+    colback=icfossgreen!8,
+    colframe=icfossgreen,
+    fonttitle=\bfseries,
+    title=Key Insight,
+    sharp corners,
+    boxrule=1pt
+}
+
+\newtcolorbox{resultbox}{
+    colback=highlight!15,
+    colframe=highlight!80!black,
+    fonttitle=\bfseries,
+    title=Result,
+    sharp corners,
+    boxrule=1pt
+}
+
+% ── Header / Footer ───────────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textcolor{codegray}{ICFOSS ML Internship — Flight Fare Prediction}}
+\fancyhead[R]{\small\textcolor{codegray}{Karthik KS}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ── Section Formatting ────────────────────────────────────────────────────
+\titleformat{\section}
+  {\Large\bfseries\color{icfossblue}}
+  {\thesection.}{0.5em}{}[\titlerule]
+
+\titleformat{\subsection}
+  {\large\bfseries\color{darkbg}}
+  {\thesubsection}{0.5em}{}
+
+\titleformat{\subsubsection}
+  {\normalsize\bfseries\color{icfossgreen}}
+  {\thesubsubsection}{0.5em}{}
+
+% ── Line Spacing ──────────────────────────────────────────────────────────
+\setstretch{1.25}
+
+% ════════════════════════════════════════════════════════════════════════════
+%                           DOCUMENT BEGINS
+% ════════════════════════════════════════════════════════════════════════════
+\begin{document}
+
+% ── Title Page ─────────────────────────────────────────────────────────────
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    
+    {\Huge\bfseries\textcolor{icfossblue}{Flight Fare Prediction}}\\[0.5cm]
+    {\Huge\bfseries\textcolor{icfossblue}{Using Machine Learning}}\\[1.5cm]
+    
+    {\Large A Comprehensive Regression \& Unsupervised Learning Study}\\[0.3cm]
+    {\large Final Project Report for ICFOSS Machine Learning Internship}\\[2cm]
+    
+    \rule{0.8\textwidth}{0.5pt}\\[0.5cm]
+    
+    {\large
+    \begin{tabular}{rl}
+        \textbf{Author}      & : Karthik KS \\[0.3cm]
+        \textbf{Program}     & : ICFOSS Machine Learning Internship \\[0.3cm]
+        \textbf{Domain}      & : Supervised \& Unsupervised Learning \\[0.3cm]
+        \textbf{Problem Type}& : Regression (Continuous Target) \\[0.3cm]
+        \textbf{Best Model}  & : Random Forest Regressor (R\textsuperscript{2} = 98.56\%) \\[0.3cm]
+        \textbf{Date}        & : June 2025 \\[0.3cm]
+    \end{tabular}
+    }\\[1cm]
+    
+    \rule{0.8\textwidth}{0.5pt}\\[1.5cm]
+    
+    {\large\textbf{Dataset}: Kaggle Flight Price Prediction Dataset}\\[0.2cm]
+    {\normalsize 300,153 flight records $\times$ 11 features}\\[1cm]
+    
+    \vfill
+    {\small ICFOSS (International Centre for Free and Open Source Software)}\\
+    {\small Kerala, India}
+\end{titlepage}
+
+% ── Table of Contents ──────────────────────────────────────────────────────
+\tableofcontents
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+% ABSTRACT
+% ════════════════════════════════════════════════════════════════════════════
+\section*{Abstract}
+\addcontentsline{toc}{section}{Abstract}
+
+This project presents a comprehensive \textbf{Machine Learning} approach to predicting domestic flight ticket prices in India. Using a dataset of \textbf{300,153 flight records} sourced from Kaggle, we implemented and compared five distinct \textbf{regression algorithms}: \textit{Linear Regression}, \textit{Decision Tree Regressor}, \textit{Random Forest Regressor}, \textit{XGBoost Regressor}, and \textit{Support Vector Regressor (SVR)}. Additionally, \textbf{K-Means Clustering} was applied as an unsupervised technique to segment flights into meaningful market groups.
+
+The \textbf{Random Forest Regressor} emerged as the best-performing model, achieving an \textbf{R\textsuperscript{2} score of 0.9856} (98.56\% accuracy), a \textbf{Mean Absolute Error (MAE)} of \rupee1,250, and a \textbf{Root Mean Squared Error (RMSE)} of \rupee2,707. Feature importance analysis revealed that \textbf{ticket class} (Economy vs. Business) is the single most dominant predictor of flight fares, contributing \textbf{88.87\%} of the total importance, followed by \textbf{flight duration} (5.64\%) and \textbf{booking window} (1.51\%).
+
+\textbf{Keywords}: Machine Learning, Regression, Random Forest, XGBoost, Flight Fare Prediction, Feature Importance, K-Means Clustering, Exploratory Data Analysis.
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+% 1. INTRODUCTION
+% ════════════════════════════════════════════════════════════════════════════
+\section{Introduction}
+
+\subsection{Background}
+
+The \textbf{Indian aviation industry} is one of the fastest-growing in the world, with millions of passengers flying daily across domestic routes. However, flight ticket pricing remains highly \textbf{dynamic and opaque} — the same seat on the same flight can cost vastly different amounts depending on \textit{when} the ticket is booked, the \textit{airline}, the \textit{class of travel}, and many other factors.
+
+\begin{keyterm}
+\textbf{Dynamic Pricing} is a strategy where airlines continuously adjust ticket prices based on real-time demand, seat availability, competitor pricing, time until departure, and passenger segmentation. This makes fare prediction a non-trivial problem ideally suited for machine learning.
+\end{keyterm}
+
+\subsection{Problem Statement}
+
+\begin{importantbox}
+Given a set of flight attributes (airline, source city, destination city, departure time, number of stops, travel class, flight duration, and days left before departure), can we \textbf{accurately predict the ticket price} using machine learning regression models?
+\end{importantbox}
+
+This is a \textbf{supervised regression problem} where:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Input Features ($X$)}: airline, source\_city, destination\_city, departure\_time, arrival\_time, stops, class, duration, days\_left
+    \item \textbf{Target Variable ($y$)}: price (in Indian Rupees, INR)
+    \item \textbf{Goal}: Learn a function $f: X \rightarrow y$ such that $f(X) \approx y$
+\end{itemize}
+
+\subsection{Objectives}
+
+\begin{enumerate}[leftmargin=*]
+    \item Perform thorough \textbf{Exploratory Data Analysis (EDA)} to understand price drivers.
+    \item \textbf{Preprocess} the data: handle missing values, encode categorical features, remove outliers, and scale features.
+    \item Train and evaluate \textbf{five regression models} with increasing complexity.
+    \item Identify the \textbf{best model} and analyse the most important features.
+    \item Apply \textbf{K-Means Clustering} to segment flights into market groups.
+    \item Answer the \textbf{ICFOSS critical thinking questions} with data-backed evidence.
+\end{enumerate}
+
+\subsection{Tools \& Technologies}
+
+\begin{table}[H]
+\centering
+\caption{Software Stack Used}
+\begin{tabular}{ll}
+\toprule
+\textbf{Category} & \textbf{Tool / Library} \\
+\midrule
+Programming Language & Python 3.13 \\
+Data Manipulation    & Pandas, NumPy \\
+Visualization        & Matplotlib, Seaborn \\
+ML Framework         & Scikit-learn \\
+Gradient Boosting    & XGBoost \\
+Web Dashboard        & Streamlit \\
+Model Persistence    & Joblib \\
+IDE                  & VS Code \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+% 2. DATASET DESCRIPTION
+% ════════════════════════════════════════════════════════════════════════════
+\section{Dataset Description}
+
+\subsection{Source}
+
+The dataset used in this project is the \textbf{Flight Price Prediction} dataset from Kaggle, available at:
+
+\url{https://www.kaggle.com/datasets/shubhambathwal/flight-price-prediction}
+
+It contains \textbf{300,153 flight records} with \textbf{11 features} (after dropping the index column), covering domestic flights between six major Indian cities across six airlines.
+
+\subsection{Feature Description}
+
+\begin{table}[H]
+\centering
+\caption{Dataset Feature Descriptions}
+\begin{tabularx}{\textwidth}{l l X}
+\toprule
+\textbf{Feature} & \textbf{Type} & \textbf{Description} \\
+\midrule
+\texttt{airline} & Categorical & Name of the airline (6 unique: SpiceJet, AirAsia, Vistara, GO\_FIRST, Indigo, Air\_India) \\
+\texttt{flight} & Categorical & Flight code identifier (1,561 unique — later dropped as too granular) \\
+\texttt{source\_city} & Categorical & Departure city (Delhi, Mumbai, Bangalore, Kolkata, Hyderabad, Chennai) \\
+\texttt{departure\_time} & Categorical & Time-of-day category (Early\_Morning, Morning, Afternoon, Evening, Night, Late\_Night) \\
+\texttt{stops} & Categorical & Number of stops (zero, one, two\_or\_more) \\
+\texttt{arrival\_time} & Categorical & Arrival time category (same categories as departure\_time) \\
+\texttt{destination\_city} & Categorical & Arrival city (same 6 cities) \\
+\texttt{class} & Categorical & Ticket class (\textbf{Economy} or \textbf{Business}) \\
+\texttt{duration} & Numerical & Flight duration in hours (range: 0.83 to 49.83) \\
+\texttt{days\_left} & Numerical & Days between booking date and travel date (range: 1 to 49) \\
+\texttt{price} & Numerical & \textbf{TARGET} — Ticket price in INR (range: \rupee1,105 to \rupee123,071) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Statistical Summary}
+
+\begin{table}[H]
+\centering
+\caption{Numerical Feature Statistics}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Statistic} & \textbf{duration (hrs)} & \textbf{days\_left} & \textbf{price (INR)} \\
+\midrule
+Count   & 300,153 & 300,153 & 300,153 \\
+Mean    & 12.22   & 26.00   & 20,890 \\
+Std Dev & 7.19    & 13.56   & 22,698 \\
+Min     & 0.83    & 1       & 1,105 \\
+25\%    & 6.83    & 15      & 4,783 \\
+50\%    & 11.25   & 26      & 7,425 \\
+75\%    & 16.17   & 38      & 42,521 \\
+Max     & 49.83   & 49      & 123,071 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{insightbox}
+The \textbf{standard deviation} of price (\rupee22,698) is \textit{larger} than the mean (\rupee20,890), indicating extreme variability. The \textbf{interquartile range (IQR)} spans from \rupee4,783 to \rupee42,521 — this massive gap is primarily due to the Economy vs. Business class split. The \textbf{median} (\rupee7,425) being much lower than the mean (\rupee20,890) reveals a strong \textbf{right skew}, meaning most tickets are economy-priced but a significant number of expensive business-class tickets pull the average up.
+\end{insightbox}
+
+\subsection{Class Distribution}
+
+\begin{table}[H]
+\centering
+\caption{Class Distribution}
+\begin{tabular}{lr}
+\toprule
+\textbf{Class} & \textbf{Count (\% of total)} \\
+\midrule
+Economy  & 206,666 (68.85\%) \\
+Business & 93,487 (31.15\%) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{insightbox}
+The dataset is \textbf{not balanced} between Economy and Business classes. Approximately \textbf{two-thirds} of all flights are Economy class. This imbalance naturally affects the price distribution and is the primary reason why ticket class dominates feature importance.
+\end{insightbox}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+% 3. EXPLORATORY DATA ANALYSIS (EDA)
+% ════════════════════════════════════════════════════════════════════════════
+\section{Exploratory Data Analysis (EDA)}
+
+\begin{keyterm}
+\textbf{Exploratory Data Analysis (EDA)} is the process of visually and statistically summarizing the main characteristics of a dataset. It helps identify patterns, anomalies, correlations, and distributions \textit{before} building any predictive model. EDA is crucial because the quality of insights drawn here directly impacts feature engineering and model performance.
+\end{keyterm}
+
+A total of \textbf{9 visualizations} were generated during EDA. Key findings are discussed below.
+
+\subsection{Price Distribution}
+
+The flight price distribution is \textbf{bimodal} — it has two distinct peaks:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{First peak} around \rupee5,000--\rupee10,000 (Economy class tickets)
+    \item \textbf{Second peak} around \rupee40,000--\rupee60,000 (Business class tickets)
+\end{itemize}
+
+The \textbf{mean price} is \rupee20,890 and the \textbf{median} is \rupee7,425. The large gap between mean and median confirms the \textbf{positive skew} caused by high-priced Business tickets.
+
+\begin{keyterm}
+\textbf{Bimodal Distribution}: A probability distribution with two different modes (peaks). In our case, the two modes correspond to Economy and Business class pricing, creating two distinct ``humps'' in the histogram. This is a strong signal that \texttt{class} will be a critical predictive feature.
+\end{keyterm}
+
+\subsection{Airline vs. Price}
+
+Boxplot analysis reveals significant price variation across airlines:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Vistara} and \textbf{Air India}: Command the highest median prices, reflecting their premium positioning and Business class offerings.
+    \item \textbf{SpiceJet} and \textbf{AirAsia}: Budget carriers with the lowest median fares.
+    \item \textbf{Indigo}: India's largest carrier, positioned in the mid-range.
+\end{itemize}
+
+\subsection{Source \& Destination City Analysis}
+
+Average ticket prices were computed for each source and destination city. The analysis reveals:
+\begin{itemize}[leftmargin=*]
+    \item Flights from/to \textbf{Delhi} and \textbf{Mumbai} tend to have higher average fares due to high demand and premium airline presence.
+    \item \textbf{Bangalore} and \textbf{Hyderabad} routes show moderate pricing.
+\end{itemize}
+
+\subsection{Number of Stops vs. Price}
+
+A violin plot analysis shows that:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Non-stop flights} have a wide price range (both cheap Economy and expensive Business).
+    \item \textbf{One-stop flights} show the highest density of mid-range prices.
+    \item \textbf{Two-or-more stop flights} are the least common and tend to be longer-duration Economy routes.
+\end{itemize}
+
+\subsection{Days Left vs. Price — The Booking Window Effect}
+
+\begin{importantbox}
+This is one of the most critical findings of the EDA. There is a clear inverse relationship between \textbf{days\_left} (how far in advance a ticket is booked) and \textbf{price}:
+\begin{itemize}
+    \item Tickets booked \textbf{40+ days} in advance average \rupee19,105
+    \item Tickets booked \textbf{15--39 days} ahead average \rupee19,713
+    \item Tickets booked \textbf{$\leq$5 days} before departure average \rupee26,348
+    \item Tickets booked \textbf{$\leq$2 days} before departure average \rupee25,630
+\end{itemize}
+The \textbf{last-minute premium} is approximately \textbf{34.2\%} higher than advance bookings.
+\end{importantbox}
+
+\subsection{Departure Time vs. Price}
+
+Boxplot analysis across six time categories (Early\_Morning, Morning, Afternoon, Evening, Night, Late\_Night) shows relatively similar price distributions, suggesting departure time has a \textbf{weak influence} on fare compared to class or duration.
+
+\subsection{Duration vs. Price}
+
+A scatter plot reveals a \textbf{positive correlation} between flight duration and price — longer flights tend to cost more. However, the relationship is \textbf{non-linear} and is modulated by class (Business class flights of the same duration cost significantly more).
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+% 4. DATA PREPROCESSING
+% ════════════════════════════════════════════════════════════════════════════
+\section{Data Preprocessing}
+
+\begin{keyterm}
+\textbf{Data Preprocessing} is the stage where raw data is cleaned, transformed, and organized into a format suitable for machine learning algorithms. This includes handling missing values, encoding categorical variables, removing outliers, and scaling numerical features. Poorly preprocessed data leads to poor model performance — the adage ``\textit{garbage in, garbage out}'' applies directly.
+\end{keyterm}
+
+\subsection{Missing Value Handling}
+
+The dataset was checked for missing (null) values across all 11 columns:
+
+\begin{resultbox}
+\textbf{Result}: \textbf{Zero missing values} were found in the entire dataset. No imputation was necessary. The dataset shape remained at 300,153 rows $\times$ 11 columns.
+\end{resultbox}
+
+\subsection{Dropping Irrelevant Features}
+
+The \texttt{flight} column (flight code, e.g., ``SG-8709'') was \textbf{dropped} because:
+\begin{itemize}[leftmargin=*]
+    \item It contains \textbf{1,561 unique values} — too granular for meaningful pattern learning.
+    \item Flight codes are \textbf{identifiers}, not predictive features.
+    \item Including them would cause \textbf{overfitting} (the model would memorize codes rather than learning fare patterns).
+\end{itemize}
+
+\begin{keyterm}
+\textbf{Overfitting} occurs when a model learns the noise and random fluctuations in training data rather than the underlying pattern. An overfit model performs well on training data but poorly on unseen test data. Dropping high-cardinality identifiers like flight codes helps prevent this.
+\end{keyterm}
+
+\subsection{Encoding Categorical Variables}
+
+Machine learning algorithms require \textbf{numerical input}. We used two encoding strategies:
+
+\subsubsection{Ordinal Encoding (for naturally ordered categories)}
+
+\begin{table}[H]
+\centering
+\caption{Ordinal Encoding Mappings}
+\begin{tabular}{ll}
+\toprule
+\textbf{Feature} & \textbf{Mapping} \\
+\midrule
+\texttt{stops} & zero $\rightarrow$ 0, one $\rightarrow$ 1, two\_or\_more $\rightarrow$ 2 \\
+\texttt{class} & Economy $\rightarrow$ 0, Business $\rightarrow$ 1 \\
+\texttt{departure\_time} & Early\_Morning $\rightarrow$ 0, Morning $\rightarrow$ 1, Afternoon $\rightarrow$ 2, \\
+                         & Evening $\rightarrow$ 3, Night $\rightarrow$ 4, Late\_Night $\rightarrow$ 5 \\
+\texttt{arrival\_time} & (Same mapping as departure\_time) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{keyterm}
+\textbf{Ordinal Encoding} assigns integer values to categories that have a natural order. For example, ``zero'' stops $<$ ``one'' stop $<$ ``two\_or\_more'' stops. This preserves the inherent ranking that the model can exploit.
+\end{keyterm}
+
+\subsubsection{One-Hot Encoding (for nominal / unordered categories)}
+
+The features \texttt{airline}, \texttt{source\_city}, and \texttt{destination\_city} have \textbf{no natural ordering} (Delhi is not ``greater than'' Mumbai). These were encoded using \textbf{One-Hot Encoding} with \texttt{drop\_first=True} to avoid the \textbf{dummy variable trap}.
+
+\begin{keyterm}
+\textbf{One-Hot Encoding} creates a binary column for each category. For example, ``airline'' with 6 values becomes 5 binary columns (with \texttt{drop\_first=True}). If a flight is operated by Vistara, the column \texttt{airline\_Vistara} = 1 and all other airline columns = 0.
+\end{keyterm}
+
+\begin{keyterm}
+\textbf{Dummy Variable Trap}: When all one-hot encoded columns are included, they become perfectly multicollinear (one column can be perfectly predicted from the others). Setting \texttt{drop\_first=True} removes one column per feature, breaking this multicollinearity. The dropped category becomes the implicit ``reference'' category.
+\end{keyterm}
+
+After encoding, the dataset expanded to \textbf{22 columns} (21 features + 1 target).
+
+\subsection{Outlier Removal using IQR Method}
+
+\begin{keyterm}
+\textbf{Interquartile Range (IQR)} is a measure of statistical dispersion:
+\[
+    IQR = Q_3 - Q_1
+\]
+where $Q_1$ is the 25th percentile and $Q_3$ is the 75th percentile. Values outside the range $[Q_1 - 1.5 \times IQR, \; Q_3 + 1.5 \times IQR]$ are considered \textbf{outliers}.
+\end{keyterm}
+
+Applied to the \texttt{price} column:
+\begin{align*}
+    Q_1 &= \text{\rupee}4,783 \\
+    Q_3 &= \text{\rupee}42,521 \\
+    IQR &= Q_3 - Q_1 = \text{\rupee}37,738 \\
+    \text{Lower Bound} &= Q_1 - 1.5 \times IQR = -\text{\rupee}51,824 \text{ (no negative prices, so effectively 0)} \\
+    \text{Upper Bound} &= Q_3 + 1.5 \times IQR = \text{\rupee}99,128
+\end{align*}
+
+\begin{resultbox}
+\textbf{Result}: \textbf{123 outliers} were removed (prices above \rupee99,128). The cleaned dataset contains \textbf{300,030 rows}.
+\end{resultbox}
+
+\subsection{Correlation Heatmap}
+
+A correlation heatmap was generated for the top 15 features most correlated with the target variable (\texttt{price}). This helps identify which features the model should pay the most attention to.
+
+\begin{keyterm}
+\textbf{Pearson Correlation Coefficient ($r$)} measures the linear relationship between two variables, ranging from $-1$ (perfect negative) to $+1$ (perfect positive). Values close to 0 indicate no linear relationship.
+\[
+    r = \frac{\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^{n}(x_i - \bar{x})^2 \cdot \sum_{i=1}^{n}(y_i - \bar{y})^2}}
+\]
+\end{keyterm}
+
+\subsection{Train-Test Split}
+
+The preprocessed dataset was split into \textbf{training} and \textbf{testing} subsets:
+
+\begin{table}[H]
+\centering
+\caption{Train-Test Split}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Set} & \textbf{Samples} & \textbf{Percentage} \\
+\midrule
+Training Set & 240,024 & 80\% \\
+Testing Set  & 60,006  & 20\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{keyterm}
+\textbf{Train-Test Split} divides the dataset into two parts: one for training the model and one for evaluating its performance on \textit{unseen data}. The 80/20 split is a standard practice. The model \textbf{never sees} the test data during training, ensuring an unbiased evaluation of its generalization ability.
+\end{keyterm}
+
+\subsection{Feature Scaling}
+
+\textbf{StandardScaler} was applied to normalize all features to have \textbf{zero mean} and \textbf{unit variance}:
+
+\[
+    x_{\text{scaled}} = \frac{x - \mu}{\sigma}
+\]
+
+where $\mu$ is the feature mean and $\sigma$ is the standard deviation. Scaling is \textbf{essential} for distance-based algorithms like SVR, and \textbf{helpful} for convergence speed in gradient-based methods.
+
+\begin{importantbox}
+The scaler was \textbf{fitted only on training data} and then \textbf{applied (transformed)} to test data. This prevents \textbf{data leakage} — if we fit the scaler on the entire dataset, the model indirectly ``sees'' test data statistics during training.
+\end{importantbox}
+
+Final feature matrix: \textbf{21 features} per sample.
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+% 5. MODEL TRAINING & EVALUATION
+% ════════════════════════════════════════════════════════════════════════════
+\section{Model Training \& Evaluation}
+
+Five regression models were trained and evaluated. Each model represents a different approach to learning the relationship between flight attributes and price.
+
+\subsection{Evaluation Metrics}
+
+\begin{keyterm}
+\textbf{Mean Absolute Error (MAE)} — The average of the absolute differences between predicted and actual values. Easy to interpret: ``on average, the prediction is off by \rupee$X$''.
+\[
+    MAE = \frac{1}{n}\sum_{i=1}^{n}|y_i - \hat{y}_i|
+\]
+\end{keyterm}
+
+\begin{keyterm}
+\textbf{Root Mean Squared Error (RMSE)} — The square root of the average of squared differences. Penalizes \textbf{large errors} more heavily than MAE.
+\[
+    RMSE = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}
+\]
+\end{keyterm}
+
+\begin{keyterm}
+\textbf{R\textsuperscript{2} Score (Coefficient of Determination)} — Measures the proportion of variance in the target explained by the model. An R\textsuperscript{2} of 1.0 means perfect prediction; 0.0 means the model is no better than predicting the mean.
+\[
+    R^2 = 1 - \frac{\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}{\sum_{i=1}^{n}(y_i - \bar{y})^2} = 1 - \frac{SS_{res}}{SS_{tot}}
+\]
+where $SS_{res}$ is the residual sum of squares and $SS_{tot}$ is the total sum of squares.
+\end{keyterm}
+
+\subsection{Model 1: Linear Regression (Baseline)}
+
+\begin{keyterm}
+\textbf{Linear Regression} is the simplest regression algorithm. It models the target as a \textbf{linear combination} of input features:
+\[
+    \hat{y} = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \cdots + \beta_p x_p
+\]
+where $\beta_0$ is the intercept and $\beta_1, \ldots, \beta_p$ are the learned coefficients. It minimizes the \textbf{Ordinary Least Squares (OLS)} objective:
+\[
+    \min_{\beta} \sum_{i=1}^{n}(y_i - \hat{y}_i)^2
+\]
+\end{keyterm}
+
+\textbf{Advantages}: Fast, interpretable, no hyperparameters. \\
+\textbf{Limitations}: Assumes a linear relationship; cannot capture non-linear patterns.
+
+\begin{resultbox}
+\textbf{Linear Regression Results}: MAE = \rupee4,476 \quad | \quad RMSE = \rupee6,731 \quad | \quad R\textsuperscript{2} = \textbf{0.9112} (91.12\%)
+\end{resultbox}
+
+\subsection{Model 2: Decision Tree Regressor}
+
+\begin{keyterm}
+\textbf{Decision Tree Regressor} builds a tree-like model of decisions. At each internal node, it selects the feature and threshold that \textbf{minimizes the variance} (or MSE) of the target in the resulting child nodes. It recursively partitions the feature space into rectangular regions, assigning each region the \textbf{mean target value} of its training samples.
+\end{keyterm}
+
+\textbf{Hyperparameters used}:
+\begin{itemize}[leftmargin=*]
+    \item \texttt{max\_depth=20}: Limits tree depth to prevent overfitting
+    \item \texttt{min\_samples\_split=10}: A node must have at least 10 samples to be split further
+\end{itemize}
+
+\textbf{Advantages}: Captures non-linear relationships, highly interpretable (can be visualized as a flowchart). \\
+\textbf{Limitations}: Prone to overfitting on noisy data; high variance (small changes in data can produce very different trees).
+
+\begin{resultbox}
+\textbf{Decision Tree Results}: MAE = \rupee1,372 \quad | \quad RMSE = \rupee3,159 \quad | \quad R\textsuperscript{2} = \textbf{0.9804} (98.04\%)
+\end{resultbox}
+
+\subsection{Model 3: Random Forest Regressor (Bagging)}
+
+\begin{keyterm}
+\textbf{Random Forest} is an \textbf{ensemble method} that trains multiple decision trees on random subsets of the data (\textbf{bagging} = \textbf{B}ootstrap \textbf{Agg}regat\textbf{ing}) and random subsets of features. The final prediction is the \textbf{average} of all tree predictions:
+\[
+    \hat{y}_{RF} = \frac{1}{T}\sum_{t=1}^{T} \hat{y}_t
+\]
+where $T$ is the number of trees and $\hat{y}_t$ is the prediction of the $t$-th tree.
+\end{keyterm}
+
+\begin{keyterm}
+\textbf{Bagging (Bootstrap Aggregating)}: Each tree is trained on a random \textbf{bootstrap sample} (sampling with replacement) of the training data. This reduces \textbf{variance} without increasing \textbf{bias}, making the ensemble more robust than any single tree.
+\end{keyterm}
+
+\textbf{Hyperparameters used}:
+\begin{itemize}[leftmargin=*]
+    \item \texttt{n\_estimators=200}: 200 decision trees in the forest
+    \item \texttt{max\_depth=20}: Each tree limited to 20 levels
+    \item \texttt{min\_samples\_split=5}: Minimum 5 samples to create a split
+    \item \texttt{n\_jobs=-1}: Use all CPU cores for parallel training
+\end{itemize}
+
+\begin{resultbox}
+\textbf{Random Forest Results}: MAE = \rupee\textbf{1,250} \quad | \quad RMSE = \rupee\textbf{2,707} \quad | \quad R\textsuperscript{2} = \textbf{0.9856} (98.56\%) \quad $\leftarrow$ \textbf{BEST MODEL}
+\end{resultbox}
+
+\subsection{Model 4: XGBoost Regressor (Boosting)}
+
+\begin{keyterm}
+\textbf{XGBoost (eXtreme Gradient Boosting)} is a \textbf{boosting} ensemble method. Unlike bagging (which trains trees independently), boosting trains trees \textbf{sequentially} — each new tree focuses on correcting the \textbf{errors (residuals)} of the previous trees. The final prediction is a weighted sum:
+\[
+    \hat{y}_{XGB} = \sum_{t=1}^{T} \eta \cdot f_t(x)
+\]
+where $\eta$ is the learning rate (shrinkage parameter) and $f_t$ is the $t$-th tree.
+\end{keyterm}
+
+\begin{keyterm}
+\textbf{Gradient Boosting} optimizes an objective function by computing the \textbf{gradient} (derivative) of the loss function with respect to the predictions, then fitting the next tree to approximate the \textbf{negative gradient}. This is equivalent to performing gradient descent in function space.
+\end{keyterm}
+
+\textbf{Hyperparameters used}:
+\begin{itemize}[leftmargin=*]
+    \item \texttt{n\_estimators=300}: 300 sequential boosting rounds
+    \item \texttt{max\_depth=8}: Each tree limited to 8 levels (shallower than RF to prevent overfitting)
+    \item \texttt{learning\_rate=0.1}: Controls the contribution of each tree
+    \item \texttt{subsample=0.8}: Each tree uses 80\% of training data (stochastic gradient boosting)
+    \item \texttt{colsample\_bytree=0.8}: Each tree uses 80\% of features
+\end{itemize}
+
+\begin{resultbox}
+\textbf{XGBoost Results}: MAE = \rupee1,599 \quad | \quad RMSE = \rupee2,880 \quad | \quad R\textsuperscript{2} = \textbf{0.9837} (98.37\%)
+\end{resultbox}
+
+\subsection{Model 5: Support Vector Regressor (SVR)}
+
+\begin{keyterm}
+\textbf{Support Vector Regressor (SVR)} with \textbf{RBF (Radial Basis Function) kernel} maps input features into a higher-dimensional space where a linear regression can be performed. The RBF kernel computes similarity as:
+\[
+    K(x_i, x_j) = \exp\left(-\gamma \|x_i - x_j\|^2\right)
+\]
+SVR tries to find a function that has at most $\epsilon$ deviation from actual values while being as ``flat'' as possible.
+\end{keyterm}
+
+\textbf{Limitations}: SVR has $O(n^2)$ to $O(n^3)$ time complexity, making it \textbf{infeasible} for large datasets. We used a \textbf{random sample of 10,000 rows} for training.
+
+\textbf{Hyperparameters used}:
+\begin{itemize}[leftmargin=*]
+    \item \texttt{kernel='rbf'}: Radial Basis Function kernel
+    \item \texttt{C=100}: Regularization parameter (higher = stricter fit)
+    \item \texttt{epsilon=0.1}: Width of the insensitive tube
+    \item \texttt{gamma='scale'}: Kernel coefficient
+\end{itemize}
+
+\begin{resultbox}
+\textbf{SVR Results}: MAE = \rupee7,419 \quad | \quad RMSE = \rupee12,514 \quad | \quad R\textsuperscript{2} = \textbf{0.6931} (69.31\%)
+\end{resultbox}
+
+\begin{insightbox}
+SVR's poor performance is expected because: (1) it was trained on only 10,000 samples (3.3\% of the full dataset), and (2) the high dimensionality (21 features) challenges the kernel method. Tree-based models are inherently better suited for tabular data with mixed feature types.
+\end{insightbox}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+% 6. MODEL COMPARISON
+% ════════════════════════════════════════════════════════════════════════════
+\section{Model Comparison}
+
+\subsection{Complete Results Table}
+
+\begin{table}[H]
+\centering
+\caption{Complete Model Comparison — Sorted by R\textsuperscript{2} Score (Descending)}
+\begin{tabular}{l r r r}
+\toprule
+\textbf{Model} & \textbf{MAE (INR)} & \textbf{RMSE (INR)} & \textbf{R\textsuperscript{2} Score} \\
+\midrule
+\textbf{Random Forest} $\star$ & \textbf{\rupee1,250} & \textbf{\rupee2,707} & \textbf{0.9856} \\
+XGBoost              & \rupee1,599 & \rupee2,880 & 0.9837 \\
+Decision Tree        & \rupee1,372 & \rupee3,159 & 0.9804 \\
+Linear Regression    & \rupee4,476 & \rupee6,731 & 0.9112 \\
+SVR (RBF)            & \rupee7,419 & \rupee12,514 & 0.6931 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+$\star$ indicates the \textbf{best overall model}.
+
+\subsection{Key Observations}
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Random Forest wins}: With R\textsuperscript{2} = 0.9856 and MAE = \rupee1,250, it provides the most accurate predictions. The bagging approach effectively reduces variance.
+    
+    \item \textbf{XGBoost is a close second}: R\textsuperscript{2} = 0.9837. The sequential boosting approach achieves comparable results, demonstrating the power of gradient boosting.
+    
+    \item \textbf{Decision Tree is strong}: R\textsuperscript{2} = 0.9804. Its high performance validates that the underlying patterns are well-captured by recursive partitioning. However, individual trees have higher variance than ensembles.
+    
+    \item \textbf{Linear Regression is a decent baseline}: R\textsuperscript{2} = 0.9112. Capturing 91\% of variance with a purely linear model suggests strong linear components in the data.
+    
+    \item \textbf{SVR underperforms}: R\textsuperscript{2} = 0.6931. Limited by small training sample and computational constraints.
+\end{enumerate}
+
+\subsection{ICFOSS Key Question: Do Advanced Models Outperform Simpler Ones?}
+
+\begin{importantbox}
+\textbf{Comparison}: Linear Regression (simple) R\textsuperscript{2} = 0.9112 vs. Random Forest (advanced) R\textsuperscript{2} = 0.9856
+
+\textbf{Improvement}: 8.17\% relative improvement in R\textsuperscript{2}.
+
+\textbf{Answer}: While the absolute R\textsuperscript{2} improvement appears modest (7.44 percentage points), the \textbf{error reduction is dramatic}:
+\begin{itemize}
+    \item MAE dropped from \rupee4,476 to \rupee1,250 — a \textbf{72\% error reduction}
+    \item RMSE dropped from \rupee6,731 to \rupee2,707 — a \textbf{60\% error reduction}
+\end{itemize}
+Advanced ensemble models provide \textbf{significantly more precise} predictions, which is critical for real-world fare comparison platforms.
+\end{importantbox}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+% 7. FEATURE IMPORTANCE
+% ════════════════════════════════════════════════════════════════════════════
+\section{Feature Importance Analysis}
+
+\begin{keyterm}
+\textbf{Feature Importance} measures how much each input feature contributes to the model's predictive power. In tree-based models (Random Forest, XGBoost), it is computed based on how much each feature reduces the impurity (variance for regression) across all trees. A higher importance score means the feature is more critical for accurate predictions.
+\end{keyterm}
+
+\subsection{Random Forest Feature Importance — Top 5}
+
+\begin{table}[H]
+\centering
+\caption{Top 5 Most Important Features (Random Forest)}
+\begin{tabular}{c l r l}
+\toprule
+\textbf{Rank} & \textbf{Feature} & \textbf{Importance} & \textbf{Interpretation} \\
+\midrule
+1 & \texttt{class}          & \textbf{0.8887 (88.87\%)} & Economy vs. Business dominates pricing \\
+2 & \texttt{duration}       & 0.0564 (5.64\%)  & Longer flights cost more \\
+3 & \texttt{days\_left}     & 0.0151 (1.51\%)  & Booking timing affects fare \\
+4 & \texttt{airline\_Air\_India}  & 0.0054 (0.54\%)  & Premium airline premium \\
+5 & \texttt{airline\_Vistara}     & 0.0049 (0.49\%)  & Premium airline premium \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{ICFOSS Key Question: Which Factors Most Strongly Influence Prices?}
+
+\begin{insightbox}
+\textbf{Answer}: The analysis reveals a clear hierarchy of price drivers:
+
+\begin{enumerate}
+    \item \textbf{Ticket Class (88.87\%)}: The single most dominant factor. Business class tickets cost approximately \rupee30,000--\rupee50,000 more than equivalent Economy tickets. This alone explains nearly 89\% of the model's decision-making.
+    
+    \item \textbf{Flight Duration (5.64\%)}: Longer flights require more fuel, crew hours, and operational costs, translating to higher fares.
+    
+    \item \textbf{Booking Window / Days Left (1.51\%)}: Airlines use yield management systems that raise prices as departure date approaches. The 34.2\% last-minute premium demonstrates this effect.
+    
+    \item \textbf{Airline Brand (combined $\sim$1\%)}: Premium carriers (Air India, Vistara) charge more than budget airlines (SpiceJet, AirAsia).
+    
+    \item \textbf{Route \& Stops}: Contribute minimally because India's major metro routes are competitively priced.
+\end{enumerate}
+\end{insightbox}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+% 8. BEST MODEL VISUALIZATIONS
+% ════════════════════════════════════════════════════════════════════════════
+\section{Best Model Visualizations}
+
+Three diagnostic plots were generated for the best model (\textbf{Random Forest Regressor}).
+
+\subsection{Actual vs. Predicted Scatter Plot}
+
+This plot places \textbf{actual prices} on the $x$-axis and \textbf{predicted prices} on the $y$-axis. Points clustered tightly along the \textbf{diagonal line} ($y = x$) indicate accurate predictions. Our Random Forest shows excellent alignment, with slight deviations only at extreme price ranges.
+
+\subsection{Residual Plot}
+
+\begin{keyterm}
+\textbf{Residuals} are the differences between actual and predicted values: $e_i = y_i - \hat{y}_i$. A good model should have residuals that are \textbf{randomly scattered} around zero with no systematic pattern. If residuals show a pattern (e.g., increasing with predicted value), it suggests the model has unaccounted non-linearity.
+\end{keyterm}
+
+The residual plot shows residuals scattered symmetrically around the zero line, confirming that the model does not have systematic bias.
+
+\subsection{Error Distribution}
+
+The histogram of residuals follows an approximately \textbf{normal distribution} centered near zero:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Mean Error}: Close to \rupee0 (no systematic over/under-prediction)
+    \item \textbf{Standard Deviation}: Approximately \rupee2,707 (matching the RMSE)
+\end{itemize}
+
+The near-normal error distribution validates that the model's errors are \textbf{random and unbiased}.
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+% 9. CRITICAL THINKING ANALYSIS
+% ════════════════════════════════════════════════════════════════════════════
+\section{Critical Thinking Analysis}
+
+\subsection{ICFOSS Question: Same Flight, Different Booking Time}
+
+\begin{importantbox}
+\textbf{Question}: ``If two flights have identical source, destination, airline, duration, and departure time, but one was booked 90 days in advance and the other 2 days before departure, should the model predict the same fare? Why or why not?''
+\end{importantbox}
+
+\subsubsection{Empirical Evidence from Our Dataset}
+
+\begin{table}[H]
+\centering
+\caption{Average Price by Booking Window}
+\begin{tabular}{l r}
+\toprule
+\textbf{Booking Window} & \textbf{Average Price (INR)} \\
+\midrule
+Booked 40+ days early    & \rupee19,105 \\
+Booked 15--39 days ahead & \rupee19,713 \\
+Booked $\leq$5 days before  & \rupee26,348 \\
+Booked $\leq$2 days before  & \rupee25,630 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Price difference (advance vs. last-minute)}: \rupee6,526 \\
+\textbf{Percentage increase}: 34.2\%
+
+\subsubsection{Answer}
+
+\begin{insightbox}
+\textbf{No} — the model should \textbf{NOT} predict the same fare. Our data conclusively proves that \texttt{days\_left} (booking timing) is a \textbf{significant price determinant}.
+
+\textbf{Reasons}:
+\begin{enumerate}
+    \item \textbf{Dynamic Pricing Algorithms}: Airlines use sophisticated yield management systems that continuously adjust fares based on remaining seat inventory and time until departure.
+    
+    \item \textbf{Demand Segmentation}: Last-minute travelers are often business travelers with \textbf{price-inelastic demand} — they will pay higher fares because their travel is non-discretionary.
+    
+    \item \textbf{Scarcity Economics}: As departure approaches, available seats decrease. Remaining seats become ``premium'' inventory priced at higher rates.
+    
+    \item \textbf{Model Validation}: Our Random Forest model correctly captures this — a sample Delhi$\rightarrow$Mumbai Vistara Economy non-stop flight is predicted at \rupee2,858 when booked 15 days ahead vs. \rupee6,756 when booked 2 days ahead (a \rupee3,898 or 136\% increase).
+\end{enumerate}
+\end{insightbox}
+
+\subsection{ICFOSS Question: Consequences of Price Estimation Errors}
+
+Using a $\pm$\rupee1,000 accuracy threshold on the test set:
+
+\begin{table}[H]
+\centering
+\caption{Prediction Error Analysis}
+\begin{tabular}{l r r}
+\toprule
+\textbf{Category} & \textbf{Count} & \textbf{Percentage} \\
+\midrule
+Accurate (within $\pm$\rupee1,000) & 42,299 & 70.5\% \\
+Overestimated (predicted too high) & 10,277 & 17.1\% \\
+Underestimated (predicted too low) & 7,430  & 12.4\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{importantbox}
+\textbf{Consequences}:
+\begin{itemize}
+    \item \textbf{Overestimation} ($\hat{y} > y$): Travelers may \textbf{skip purchasing}, believing the fare is a bad deal when it is actually reasonable. This reduces booking volumes for airlines and travel platforms.
+    
+    \item \textbf{Underestimation} ($\hat{y} < y$): Travelers expect a lower price but encounter a higher actual fare at checkout, causing \textbf{disappointment and reduced trust} in the prediction platform.
+    
+    \item \textbf{Mitigation}: Present predictions as a \textbf{confidence range} (e.g., \rupee8,000 -- \rupee12,000) rather than a single scalar value. Include historical price trends to help users make informed decisions.
+\end{itemize}
+\end{importantbox}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+% 10. K-MEANS CLUSTERING
+% ════════════════════════════════════════════════════════════════════════════
+\section{K-Means Clustering (Unsupervised Learning)}
+
+\begin{keyterm}
+\textbf{K-Means Clustering} is an \textbf{unsupervised learning} algorithm that partitions $n$ data points into $K$ clusters. Each cluster is defined by its \textbf{centroid} (the mean of all points in the cluster). The algorithm iterates between:
+\begin{enumerate}
+    \item \textbf{Assignment Step}: Assign each point to the nearest centroid
+    \item \textbf{Update Step}: Recompute centroids as the mean of assigned points
+\end{enumerate}
+The objective is to minimize the \textbf{Within-Cluster Sum of Squares (WCSS)}:
+\[
+    WCSS = \sum_{k=1}^{K}\sum_{x_i \in C_k} \|x_i - \mu_k\|^2
+\]
+where $C_k$ is the $k$-th cluster and $\mu_k$ is its centroid.
+\end{keyterm}
+
+\subsection{Feature Selection for Clustering}
+
+Five features were selected for clustering: \texttt{duration}, \texttt{stops}, \texttt{days\_left}, \texttt{class}, and \texttt{price}. All features were \textbf{standardized} before clustering to ensure equal weighting.
+
+\subsection{Elbow Method — Finding Optimal K}
+
+\begin{keyterm}
+The \textbf{Elbow Method} runs K-Means for different values of $K$ (2 to 10) and plots the \textbf{WCSS (inertia)} against $K$. The optimal $K$ is at the ``elbow'' point where adding more clusters yields \textbf{diminishing returns} in variance reduction. A sample of 20,000 rows was used for computational efficiency.
+\end{keyterm}
+
+The elbow curve showed a clear bend at \textbf{K = 4}, which was selected as the optimal number of clusters.
+
+\subsection{Cluster Characteristics}
+
+\begin{table}[H]
+\centering
+\caption{K-Means Cluster Summary (K=4)}
+\begin{tabular}{c l r r c c}
+\toprule
+\textbf{Cluster} & \textbf{Label} & \textbf{Avg Price} & \textbf{Avg Duration} & \textbf{Class} & \textbf{Booking} \\
+\midrule
+0 & Urgent Economy    & \rupee8,790  & 13.6h & Economy  & 14 days ahead \\
+1 & Premium Business  & \rupee54,813 & 14.8h & Business & 26 days ahead \\
+2 & Advance Economy   & \rupee5,242  & 12.4h & Economy  & 37 days ahead \\
+3 & Short Non-Stops   & \rupee9,376  & 2.2h  & Economy  & 26 days ahead \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{PCA Visualization}
+
+\begin{keyterm}
+\textbf{Principal Component Analysis (PCA)} is a \textbf{dimensionality reduction} technique that projects high-dimensional data onto a lower-dimensional space while preserving maximum variance. We used PCA to reduce the 5 clustering features to \textbf{2 principal components} for visualization.
+\[
+    z = W^T x
+\]
+where $W$ is the matrix of eigenvectors (principal components) and $x$ is the original feature vector.
+\end{keyterm}
+
+The PCA scatter plot shows four well-separated clusters, validating that the K-Means segmentation captures meaningful market segments.
+
+\begin{insightbox}
+\textbf{Business Insight}: These clusters represent distinct \textbf{market segments}:
+\begin{itemize}
+    \item \textbf{Cluster 2 (Advance Economy)}: Price-sensitive leisure travelers who book early — ideal for promotional offers.
+    \item \textbf{Cluster 0 (Urgent Economy)}: Last-minute economy travelers — target for dynamic pricing upselling.
+    \item \textbf{Cluster 1 (Premium Business)}: High-value corporate travelers — prioritize service quality over price.
+    \item \textbf{Cluster 3 (Short Non-Stops)}: Short-haul commuters (e.g., Delhi--Mumbai shuttle) — high frequency, price-aware.
+\end{itemize}
+\end{insightbox}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+% 11. SAVED MODEL & SAMPLE PREDICTION
+% ════════════════════════════════════════════════════════════════════════════
+\section{Model Deployment \& Sample Prediction}
+
+\subsection{Saved Artifacts}
+
+The following artifacts were saved using \textbf{Joblib} for future deployment:
+
+\begin{table}[H]
+\centering
+\caption{Saved Model Artifacts}
+\begin{tabular}{l l}
+\toprule
+\textbf{File} & \textbf{Contents} \\
+\midrule
+\texttt{saved\_models/best\_model.pkl}    & Trained Random Forest Regressor \\
+\texttt{saved\_models/scaler.pkl}          & Fitted StandardScaler \\
+\texttt{saved\_models/feature\_names.pkl}  & List of 21 feature column names \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Sample Prediction}
+
+\begin{table}[H]
+\centering
+\caption{Sample Flight Details}
+\begin{tabular}{l l}
+\toprule
+\textbf{Attribute} & \textbf{Value} \\
+\midrule
+Airline     & Vistara \\
+Route       & Delhi $\rightarrow$ Mumbai \\
+Class       & Economy \\
+Stops       & Non-stop \\
+Duration    & 2.25 hours \\
+Departure   & Morning \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{resultbox}
+\begin{tabular}{l r}
+Booked \textbf{15 days} ahead  & Predicted Price: \textbf{\rupee2,858} \\
+Booked \textbf{2 days} ahead   & Predicted Price: \textbf{\rupee6,756} \\
+\textbf{Last-minute premium}   & \textbf{\rupee3,898 (136\% increase)} \\
+\end{tabular}
+\end{resultbox}
+
+\subsection{Web Dashboard (Streamlit)}
+
+A fully interactive web dashboard was built using \textbf{Streamlit} (\texttt{app.py}) with four tabs:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Predict Fare}: Real-time price prediction with user-selectable inputs
+    \item \textbf{EDA Gallery}: Browse all 21 visualization plots organized by category
+    \item \textbf{ICFOSS Key Questions}: Data-backed answers to evaluation questions
+    \item \textbf{Clustering Explorer}: K-Means results with PCA visualization
+\end{enumerate}
+
+Launch command: \texttt{streamlit run app.py}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+% 12. CONCLUSION
+% ════════════════════════════════════════════════════════════════════════════
+\section{Conclusion}
+
+\subsection{Summary of Findings}
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Best Model}: \textbf{Random Forest Regressor} with R\textsuperscript{2} = 0.9856, MAE = \rupee1,250, RMSE = \rupee2,707. It outperforms all other models across all metrics.
+    
+    \item \textbf{Most Important Feature}: \textbf{Ticket class} (Economy vs. Business) accounts for \textbf{88.87\%} of feature importance. This single binary feature is the primary price determinant.
+    
+    \item \textbf{Booking Timing Matters}: Last-minute bookings (1--2 days before departure) cost \textbf{34.2\% more} than advance bookings (40+ days). Dynamic pricing is empirically proven in our data.
+    
+    \item \textbf{Advanced Models Win}: Ensemble methods (Random Forest, XGBoost) reduce prediction error by \textbf{60--72\%} compared to Linear Regression.
+    
+    \item \textbf{Market Segmentation}: K-Means identified 4 distinct flight segments: Urgent Economy, Premium Business, Advance Economy, and Short Non-Stops.
+    
+    \item \textbf{Prediction Accuracy}: 70.5\% of predictions are within $\pm$\rupee1,000 of the actual price.
+\end{enumerate}
+
+\subsection{Limitations}
+
+\begin{itemize}[leftmargin=*]
+    \item Dataset is limited to \textbf{6 Indian cities and 6 airlines} — may not generalize to international routes.
+    \item \textbf{SVR} was undertrained due to computational constraints (only 10,000 samples).
+    \item The dataset does not include \textbf{real-time factors} like fuel prices, festivals, or pandemic impacts.
+    \item No \textbf{hyperparameter tuning} (e.g., GridSearchCV) was performed — models may improve with optimization.
+\end{itemize}
+
+\subsection{Future Work}
+
+\begin{itemize}[leftmargin=*]
+    \item Implement \textbf{hyperparameter tuning} using GridSearchCV or Bayesian Optimization.
+    \item Add \textbf{temporal features} (month, day of week, festival season) for seasonality modelling.
+    \item Deploy the Streamlit dashboard on \textbf{cloud platforms} (Heroku, AWS, Streamlit Cloud).
+    \item Explore \textbf{deep learning} approaches (Neural Networks) for potential non-linear improvements.
+    \item Incorporate \textbf{real-time flight API data} for live predictions.
+\end{itemize}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+% 13. REFERENCES
+% ════════════════════════════════════════════════════════════════════════════
+\section{References}
+
+\begin{enumerate}[leftmargin=*]
+    \item Bathwal, S. (2022). \textit{Flight Price Prediction Dataset}. Kaggle. \url{https://www.kaggle.com/datasets/shubhambathwal/flight-price-prediction}
+    
+    \item Breiman, L. (2001). ``Random Forests.'' \textit{Machine Learning}, 45(1), 5--32.
+    
+    \item Chen, T., \& Guestrin, C. (2016). ``XGBoost: A Scalable Tree Boosting System.'' \textit{Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}, 785--794.
+    
+    \item Pedregosa, F., et al. (2011). ``Scikit-learn: Machine Learning in Python.'' \textit{Journal of Machine Learning Research}, 12, 2825--2830.
+    
+    \item Vapnik, V. (1995). \textit{The Nature of Statistical Learning Theory}. Springer-Verlag.
+    
+    \item MacQueen, J. (1967). ``Some Methods for Classification and Analysis of Multivariate Observations.'' \textit{Proceedings of the Fifth Berkeley Symposium on Mathematical Statistics and Probability}, 1, 281--297.
+    
+    \item Hastie, T., Tibshirani, R., \& Friedman, J. (2009). \textit{The Elements of Statistical Learning} (2nd ed.). Springer.
+    
+    \item James, G., Witten, D., Hastie, T., \& Tibshirani, R. (2013). \textit{An Introduction to Statistical Learning}. Springer.
+\end{enumerate}
+
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+% APPENDIX
+% ════════════════════════════════════════════════════════════════════════════
+\appendix
+\section{Appendix: Complete List of Generated Plots}
+
+\begin{table}[H]
+\centering
+\caption{All 21 Plots Generated During Pipeline Execution}
+\begin{tabular}{c l}
+\toprule
+\textbf{\#} & \textbf{Plot Filename \& Description} \\
+\midrule
+1  & \texttt{01\_price\_distribution.png} — Price histogram + KDE by class \\
+2  & \texttt{02\_airline\_vs\_price.png} — Airline boxplot comparison \\
+3  & \texttt{03\_source\_destination\_price.png} — City-wise average prices \\
+4  & \texttt{04\_stops\_vs\_price.png} — Violin plot: stops vs. price \\
+5  & \texttt{05\_days\_left\_vs\_price.png} — Booking window line chart \\
+6  & \texttt{06\_departure\_time\_vs\_price.png} — Time category boxplots \\
+7  & \texttt{07\_duration\_vs\_price.png} — Duration scatter plot \\
+8  & \texttt{08\_airline\_count\_and\_price.png} — Market share dual-axis \\
+9  & \texttt{09\_class\_comparison.png} — Economy vs. Business by airline \\
+10 & \texttt{10\_correlation\_heatmap.png} — Top 15 correlation heatmap \\
+11 & \texttt{12\_model\_comparison\_r2.png} — R\textsuperscript{2} score bar chart \\
+12 & \texttt{13\_model\_comparison\_mae.png} — MAE bar chart \\
+13 & \texttt{14\_all\_metrics\_overview.png} — Grouped metrics overview \\
+14 & \texttt{15\_feature\_importance\_rf.png} — Random Forest importances \\
+15 & \texttt{16\_feature\_importance\_xgb.png} — XGBoost importances \\
+16 & \texttt{17\_actual\_vs\_predicted.png} — Actual vs. Predicted scatter \\
+17 & \texttt{18\_residual\_plot.png} — Residual scatter plot \\
+18 & \texttt{19\_error\_distribution.png} — Error histogram + KDE \\
+19 & \texttt{20\_critical\_thinking\_analysis.png} — Booking window analysis \\
+20 & \texttt{21\_elbow\_method.png} — K-Means elbow curve \\
+21 & \texttt{22\_kmeans\_clusters.png} — PCA cluster visualization \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Appendix: 21 Feature Names Used by the Model}
+
+\begin{lstlisting}[style=pythonstyle, caption={Feature Names (21 total)}]
+features = [
+    'departure_time', 'stops', 'arrival_time', 'class',
+    'duration', 'days_left',
+    'airline_Air_India', 'airline_GO_FIRST', 'airline_Indigo',
+    'airline_SpiceJet', 'airline_Vistara',
+    'source_city_Chennai', 'source_city_Delhi',
+    'source_city_Hyderabad', 'source_city_Kolkata',
+    'source_city_Mumbai',
+    'destination_city_Chennai', 'destination_city_Delhi',
+    'destination_city_Hyderabad', 'destination_city_Kolkata',
+    'destination_city_Mumbai'
+]
+\end{lstlisting}
+
+\vfill
+\begin{center}
+    \rule{0.5\textwidth}{0.5pt}\\[0.5cm]
+    {\large\textbf{--- End of Report ---}}\\[0.3cm]
+    {\normalsize ICFOSS Machine Learning Internship $\cdot$ Karthik KS $\cdot$ June 2025}
+\end{center}
+
+\end{document}

@@ -1,0 +1,298 @@
+======================================================================
+   SECTION 1 — DATA LOADING & INITIAL EXPLORATION
+======================================================================
+
+✅ Dataset loaded from: D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\archive\Clean_Dataset.csv
+
+📊 Dataset Shape: 300,153 rows × 11 columns
+
+--- First 5 Rows ---
+    airline   flight source_city departure_time stops   arrival_time destination_city    class  duration  days_left  price
+0  SpiceJet  SG-8709       Delhi        Evening  zero          Night           Mumbai  Economy      2.17          1   5953
+1  SpiceJet  SG-8157       Delhi  Early_Morning  zero        Morning           Mumbai  Economy      2.33          1   5953
+2   AirAsia   I5-764       Delhi  Early_Morning  zero  Early_Morning           Mumbai  Economy      2.17          1   5956
+3   Vistara   UK-995       Delhi        Morning  zero      Afternoon           Mumbai  Economy      2.25          1   5955
+4   Vistara   UK-963       Delhi        Morning  zero        Morning           Mumbai  Economy      2.33          1   5955
+
+--- Data Types ---
+airline                 str
+flight                  str
+source_city             str
+departure_time          str
+stops                   str
+arrival_time            str
+destination_city        str
+class                   str
+duration            float64
+days_left             int64
+price                 int64
+dtype: object
+
+--- Statistical Summary ---
+            duration      days_left          price
+count  300153.000000  300153.000000  300153.000000
+mean       12.221021      26.004751   20889.660523
+std         7.191997      13.561004   22697.767366
+min         0.830000       1.000000    1105.000000
+25%         6.830000      15.000000    4783.000000
+50%        11.250000      26.000000    7425.000000
+75%        16.170000      38.000000   42521.000000
+max        49.830000      49.000000  123071.000000
+
+--- Categorical Feature Unique Values ---
+   airline: <StringArray>
+['SpiceJet', 'AirAsia', 'Vistara', 'GO_FIRST', 'Indigo', 'Air_India']
+Length: 6, dtype: str
+   flight: <StringArray>
+['SG-8709', 'SG-8157',  'I5-764',  'UK-995',  'UK-963',  'UK-945',  'UK-927',
+  'UK-951',  'G8-334',  'G8-336',
+ ...
+  '6E-804', '6E-7183', 'SG-6017', '6E-7208', '6E-7252', '6E-7141',  '6E-557',
+ '6E-7127', '6E-7259',  'AI-433']
+Length: 1561, dtype: str
+   source_city: <StringArray>
+['Delhi', 'Mumbai', 'Bangalore', 'Kolkata', 'Hyderabad', 'Chennai']
+Length: 6, dtype: str
+   departure_time: <StringArray>
+['Evening', 'Early_Morning', 'Morning', 'Afternoon', 'Night', 'Late_Night']
+Length: 6, dtype: str
+   stops: <StringArray>
+['zero', 'one', 'two_or_more']
+Length: 3, dtype: str
+   arrival_time: <StringArray>
+['Night', 'Morning', 'Early_Morning', 'Afternoon', 'Evening', 'Late_Night']
+Length: 6, dtype: str
+   destination_city: <StringArray>
+['Mumbai', 'Bangalore', 'Kolkata', 'Hyderabad', 'Chennai', 'Delhi']
+Length: 6, dtype: str
+   class: <StringArray>
+['Economy', 'Business']
+Length: 2, dtype: str
+
+--- Missing Values ---
+   No missing values found! ✅
+
+--- Class Distribution ---
+   Economy : 206,666
+   Business: 93,487
+
+======================================================================
+   SECTION 2 — EXPLORATORY DATA ANALYSIS (EDA)
+======================================================================
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\01_price_distribution.png
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\02_airline_vs_price.png
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\03_source_destination_price.png
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\04_stops_vs_price.png
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\05_days_left_vs_price.png
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\06_departure_time_vs_price.png
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\07_duration_vs_price.png
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\08_airline_count_and_price.png
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\09_class_comparison.png
+
+======================================================================
+   SECTION 3 — DATA PREPROCESSING
+======================================================================
+
+🔧 Checking & handling missing values...
+   Shape after handling: (300153, 11)
+🔧 Dropping 'flight' column (1,561 unique codes — too granular)...
+🔧 Encoding 'stops' as ordinal (zero=0, one=1, two_or_more=2)...
+   ✅ Mapping: {'zero': 0, 'one': 1, 'two_or_more': 2}
+🔧 Encoding 'class' (Economy=0, Business=1)...
+🔧 Encoding time categories...
+   ✅ Time mapping: {'Early_Morning': 0, 'Morning': 1, 'Afternoon': 2, 'Evening': 3, 'Night': 4, 'Late_Night': 5}
+🔧 One-Hot Encoding: airline, source_city, destination_city...
+   ✅ Columns after encoding: 22
+🔧 Removing outliers (IQR method on Price)...
+   IQR: 37,738 | Bounds: [-51,824, 99,128]
+   Removed 123 outliers. Remaining: 300,030 rows
+🔧 Generating correlation heatmap...
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\10_correlation_heatmap.png
+
+📐 Feature matrix: (300030, 21)   |   Target vector: (300030,)
+   Features: ['departure_time', 'stops', 'arrival_time', 'class', 'duration', 'days_left', 'airline_Air_India', 'airline_GO_FIRST', 'airline_Indigo', 'airline_SpiceJet', 'airline_Vistara', 'source_city_Chennai', 'source_city_Delhi', 'source_city_Hyderabad', 'source_city_Kolkata', 'source_city_Mumbai', 'destination_city_Chennai', 'destination_city_Delhi', 'destination_city_Hyderabad', 'destination_city_Kolkata', 'destination_city_Mumbai']
+
+   Training set : 240,024 samples
+   Testing set  : 60,006 samples
+🔧 Applying StandardScaler...
+   ✅ Scaling complete.
+
+======================================================================
+   SECTION 4 — MODEL TRAINING & EVALUATION
+======================================================================
+
+── Training Linear Regression (baseline)...
+
+   🏷️  Linear Regression
+      MAE  = ₹4,475.95
+      RMSE = ₹6,731.48
+      R²   = 0.9112  (91.12%)
+
+── Training Decision Tree Regressor...
+
+   🏷️  Decision Tree
+      MAE  = ₹1,371.53
+      RMSE = ₹3,159.09
+      R²   = 0.9804  (98.04%)
+
+── Training Random Forest Regressor (Bagging - 200 trees)...
+
+   🏷️  Random Forest
+      MAE  = ₹1,249.67
+      RMSE = ₹2,706.70
+      R²   = 0.9856  (98.56%)
+
+── Training XGBoost Regressor (Boosting - 300 trees)...
+
+   🏷️  XGBoost
+      MAE  = ₹1,598.87
+      RMSE = ₹2,879.72
+      R²   = 0.9837  (98.37%)
+
+── Training SVR (RBF kernel) — using 10,000 sample for speed...
+
+   🏷️  SVR (RBF)
+      MAE  = ₹7,419.21
+      RMSE = ₹12,513.61
+      R²   = 0.6931  (69.31%)
+
+======================================================================
+   SECTION 5 — MODEL COMPARISON
+======================================================================
+
+📊 Model Comparison Table:
+
+            Model         MAE         RMSE  R2_Score
+    Random Forest 1249.667885  2706.700588  0.985640
+          XGBoost 1598.872070  2879.718129  0.983746
+    Decision Tree 1371.528733  3159.090471  0.980439
+Linear Regression 4475.945687  6731.477701  0.911186
+        SVR (RBF) 7419.210244 12513.610061  0.693081
+
+🏆 BEST MODEL: Random Forest  (R² = 0.9856)
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\12_model_comparison_r2.png
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\13_model_comparison_mae.png
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\14_all_metrics_overview.png
+
+======================================================================
+   SECTION 6 — FEATURE IMPORTANCE
+======================================================================
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\15_feature_importance_rf.png
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\16_feature_importance_xgb.png
+
+   📋 Key Findings — Factors Influencing Ticket Prices:
+   --------------------------------------------------
+   1. class                          → Importance: 0.8887
+   2. duration                       → Importance: 0.0564
+   3. days_left                      → Importance: 0.0151
+   4. airline_Air_India              → Importance: 0.0054
+   5. airline_Vistara                → Importance: 0.0049
+   --------------------------------------------------
+
+======================================================================
+   SECTION 7 — BEST MODEL VISUALIZATIONS
+======================================================================
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\17_actual_vs_predicted.png
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\18_residual_plot.png
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\19_error_distribution.png
+
+======================================================================
+   SECTION 8 — BOOKING TIMING ANALYSIS
+======================================================================
+
+   📊 Average Price by Booking Window:
+      Booked 40+ days early : ₹19,105
+      Booked 15-39 days     : ₹19,713
+      Booked ≤5 days        : ₹26,348
+      Booked ≤2 days (last) : ₹25,630
+
+   💡 Price difference (advance vs last-minute): ₹6,526
+   💡 Percentage increase: 34.2%
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\20_booking_timing_analysis.png
+
+======================================================================
+   SECTION 9 — PREDICTION ERROR ANALYSIS
+======================================================================
+
+   📋 Prediction Accuracy (threshold: ±₹1,000):
+      ✅ Accurate (within ±₹1,000)   : 42,299 (70.5%)
+      ⬆️  Overestimated (too high)    : 10,277 (17.1%)
+      ⬇️  Underestimated (too low)    : 7,430 (12.4%)
+
+======================================================================
+   SECTION 10 — K-MEANS CLUSTERING (Unsupervised Analysis)
+======================================================================
+
+🔧 Running Elbow Method (K = 2 to 10) — using a sample of 20,000 rows for speed...
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\21_elbow_method.png
+
+🔧 Fitting K-Means with K = 4...
+🔧 Generating PCA 2D visualization of clusters...
+   ✅ Plot saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots\22_kmeans_clusters.png
+
+📊 Cluster Summary (average values):
+         duration  stops  days_left  class     price
+Cluster                                             
+0           13.63   1.08      14.24   0.00   8790.34
+1           14.79   1.01      25.77   1.00  54813.26
+2           12.43   1.06      37.45   0.00   5242.21
+3            2.19   0.00      25.96   0.23   9375.94
+
+   💡 Cluster Insights:
+   Cluster 0: Avg ₹8,790 | Economy | ~13.6h | 1-stop | booked 14 days ahead
+   Cluster 1: Avg ₹54,813 | Business | ~14.8h | 1-stop | booked 26 days ahead
+   Cluster 2: Avg ₹5,242 | Economy | ~12.4h | 1-stop | booked 37 days ahead
+   Cluster 3: Avg ₹9,376 | Economy | ~2.2h | non-stop | booked 26 days ahead
+
+======================================================================
+   SECTION 11 — SAVE BEST MODEL
+======================================================================
+
+   ✅ Scaler saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\saved_models\scaler.pkl
+   ✅ Best model (Random Forest) saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\saved_models\best_model.pkl
+   ✅ Feature names saved → D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\saved_models\feature_names.pkl
+
+======================================================================
+   SECTION 12 — SAMPLE PREDICTION
+======================================================================
+
+   🎯 Predicting price for a sample flight:
+      Airline     : Vistara
+      Source      : Delhi → Mumbai
+      Class       : Economy
+      Stops       : Non-stop
+      Duration    : 2.25 hours
+      Departure   : Morning
+      Days Left   : 15 days
+
+   💰 Predicted Price: ₹2,857.89
+   🏷️  Model Used: Random Forest
+
+   📊 Same flight booked 2 days before: ₹6,756.28
+   📊 Difference (last-minute premium): ₹3,898.39
+
+══════════════════════════════════════════════════════════════════════
+   ✨ PROJECT COMPLETE — FLIGHT FARE PREDICTION ✨
+══════════════════════════════════════════════════════════════════════
+
+   📁 Plots saved in         : D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\plots
+   📁 Models saved in        : D:\Machinelearning icfoss\FINAL PROJECT FOR GRADING\files\saved_models
+   🏆 Best model             : Random Forest
+   📈 Best R² Score          : 0.9856
+   📉 Best MAE              : ₹1,250
+   📉 Best RMSE             : ₹2,707
+   🔢 Features used          : 21
+   📊 Clusters identified    : 4
+   📊 Total visualizations   : 21 plots
+
+   ── Algorithms Evaluated ──────────────────────────────────────
+   1. Linear Regression       (baseline — simplest approach)
+   2. Decision Tree Regressor (interpretable flowchart model)
+   3. Random Forest Regressor (Bagging — ensemble of 200 trees)
+   4. XGBoost Regressor       (Boosting — sequential error correction)
+   5. SVR (RBF kernel)        (non-linear via kernel trick)
+   6. K-Means Clustering      (unsupervised market segmentation)
+
+   Author: Karthik KS
+
+══════════════════════════════════════════════════════════════════════

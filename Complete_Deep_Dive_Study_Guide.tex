@@ -1,0 +1,853 @@
+\documentclass[12pt, a4paper]{article}
+
+% ── Packages ──
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{tcolorbox}
+
+% ── Colors ──
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codetext}{HTML}{333333}
+\definecolor{keywordcolor}{HTML}{0000FF}
+\definecolor{stringcolor}{HTML}{A31515}
+\definecolor{commentcolor}{HTML}{008000}
+\definecolor{tipgreen}{HTML}{27AE60}
+\definecolor{warnred}{HTML}{E74C3C}
+\definecolor{noteyellow}{HTML}{F39C12}
+
+% ── Code listing settings ──
+\lstset{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\footnotesize\color{codetext},
+    keywordstyle=\color{keywordcolor}\bfseries,
+    stringstyle=\color{stringcolor},
+    commentstyle=\color{commentcolor}\itshape,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{gray},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    showstringspaces=false,
+    tabsize=4
+}
+
+% ── Colored boxes ──
+\newtcolorbox{tipbox}[1][]{colback=green!5!white, colframe=tipgreen, title=\textbf{TIP}, fonttitle=\bfseries, #1}
+\newtcolorbox{warnbox}[1][]{colback=red!5!white, colframe=warnred, title=\textbf{IMPORTANT — They Will Ask This!}, fonttitle=\bfseries, #1}
+\newtcolorbox{conceptbox}[1][]{colback=blue!5!white, colframe=blue!60!black, title=\textbf{Concept Explained}, fonttitle=\bfseries, #1}
+\newtcolorbox{codewalkbox}[1][]{colback=yellow!5!white, colframe=noteyellow, title=\textbf{Code Walkthrough}, fonttitle=\bfseries, #1}
+
+% ── Header/Footer ──
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Karthik KS — ICFOSS Internship}
+\lhead{Flight Fare Prediction — Complete Study Guide}
+\cfoot{Page \thepage}
+
+% ── Title ──
+\title{
+    \textbf{\Huge Complete Deep-Dive Study Guide} \\[0.5cm]
+    \textbf{\LARGE Flight Fare Prediction using Machine Learning} \\[0.5cm]
+    \large ICFOSS Hybrid Internship Program \\[0.3cm]
+    \large Covers: Project Idea, Every Concept, Full Code, Viva Q\&A
+}
+\author{Prepared for: \textbf{Karthik KS}}
+\date{June 2026}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\begin{center}
+    \fbox{\parbox{0.9\textwidth}{
+        \centering \large
+        \textbf{Read this document 3--4 times before your Viva.} \\
+        Everything the mentor can possibly ask you is explained here \\
+        in simple language, with code examples and exact answers.
+    }}
+\end{center}
+
+\newpage
+\tableofcontents
+\newpage
+
+
+% ════════════════════════════════════════════════════════════════════════════
+% PART 1: THE BIG PICTURE
+% ════════════════════════════════════════════════════════════════════════════
+
+\part{The Big Picture — Understanding the Project}
+
+\section{What is Machine Learning?}
+
+\begin{conceptbox}
+    Machine Learning (ML) is a branch of Artificial Intelligence where you teach a computer to \textbf{learn patterns from data} instead of manually writing rules.
+\end{conceptbox}
+
+Imagine you want to predict how much a flight ticket will cost. You could write hundreds of if-else rules:
+\begin{lstlisting}
+if airline == "Vistara" and days_left < 5:
+    price = 8000
+elif airline == "Indigo" and days_left > 30:
+    price = 3000
+# ... 10,000 more rules
+\end{lstlisting}
+
+That is \textbf{impossible} to maintain. Instead, Machine Learning says: ``Give me 300,000 old flight tickets with their actual prices, and I will \textit{learn} the pricing pattern myself.''
+
+\subsection{Types of Machine Learning}
+\begin{enumerate}
+    \item \textbf{Supervised Learning}: You give the computer both the \textit{input} (flight details) and the \textit{correct answer} (the actual price). It learns from this. \textbf{Your project uses this.}
+    \item \textbf{Unsupervised Learning}: You give the computer only the \textit{input} and ask it to find hidden groups (clusters). \textbf{You also did this using K-Means Clustering.}
+    \item \textbf{Reinforcement Learning}: The computer learns by trial-and-error rewards. \textbf{Not used in your project.}
+\end{enumerate}
+
+\subsection{Regression vs Classification}
+\begin{itemize}
+    \item \textbf{Classification}: Predicting a \textit{category} (e.g., ``Is this email spam or not?'').
+    \item \textbf{Regression}: Predicting a \textit{continuous number} (e.g., ``What will the ticket price be?''). \textbf{Your project is a Regression problem because price is a number, not a category.}
+\end{itemize}
+
+\begin{warnbox}
+    \textbf{Q: Is your project a classification or regression problem?} \\
+    A: ``It is a \textbf{Regression} problem because I am predicting a continuous numerical value — the flight ticket price in Indian Rupees — not a category.''
+\end{warnbox}
+
+
+\section{What is Your Project About?}
+
+\begin{conceptbox}
+    You built a complete \textbf{end-to-end Machine Learning pipeline} that predicts domestic flight ticket prices in India. This means you did everything: collected data, cleaned it, explored it with graphs, trained 5 different algorithms, picked the best one, and deployed it as a website using Flask.
+\end{conceptbox}
+
+\subsection{The Elevator Pitch (Memorize This Word-for-Word)}
+
+\begin{tipbox}
+    ``My project is a Machine Learning web application that predicts domestic flight prices in India. I used a Kaggle dataset of 300,153 flight records, performed data exploration and preprocessing including outlier removal using IQR and encoding of categorical variables. I trained and compared five regression algorithms — Linear Regression, Decision Tree, Random Forest, XGBoost, and SVR. The Random Forest Regressor achieved the best R-squared score of 98.56 percent with a Mean Absolute Error of only 1,250 Rupees. Finally, I deployed the trained model as an interactive web application using the Flask framework in Python.''
+\end{tipbox}
+
+\subsection{Why This Problem Matters}
+\begin{itemize}
+    \item Flight ticket prices are \textbf{dynamic} — they change every hour based on demand, time of booking, airline, route, stops, and class.
+    \item Passengers have \textbf{no way to know} whether the current price is cheap or expensive.
+    \item Your model \textbf{solves} this by analyzing historical patterns and telling the user what to expect.
+\end{itemize}
+
+
+\section{The Dataset}
+
+\subsection{Where Did You Get It?}
+\begin{itemize}
+    \item \textbf{Source}: Kaggle (an open-source data science platform by Google).
+    \item \textbf{File}: \texttt{Clean\_Dataset.csv}
+    \item \textbf{Size}: 300,153 rows $\times$ 12 columns.
+    \item \textbf{Author}: Shubham Bathwal (2022).
+\end{itemize}
+
+\subsection{What Does Each Column Mean?}
+Here is every single column in your dataset:
+
+\begin{center}
+\begin{tabular}{|l|l|l|}
+    \hline
+    \textbf{Column Name} & \textbf{Data Type} & \textbf{Meaning} \\
+    \hline
+    airline & Text & Name of the airline (Vistara, Indigo, etc.) \\
+    flight & Text & Flight code number (dropped later) \\
+    source\_city & Text & Departure city (Delhi, Mumbai, etc.) \\
+    departure\_time & Text & Time of day (Morning, Night, etc.) \\
+    stops & Text & Number of stops (zero, one, two\_or\_more) \\
+    arrival\_time & Text & Arrival time of day \\
+    destination\_city & Text & Arrival city \\
+    class & Text & Economy or Business \\
+    duration & Number & Flight duration in hours (e.g., 2.5) \\
+    days\_left & Number & Days between booking and departure \\
+    \textbf{price} & \textbf{Number} & \textbf{Ticket price in INR (THIS IS THE TARGET)} \\
+    \hline
+\end{tabular}
+\end{center}
+
+\begin{warnbox}
+    \textbf{Q: What is the target variable?} \\
+    A: ``The target variable is \texttt{price} — the ticket price in Indian Rupees. This is what my model is trying to predict.''
+\end{warnbox}
+
+
+% ════════════════════════════════════════════════════════════════════════════
+% PART 2: EVERY CONCEPT IN DETAIL
+% ════════════════════════════════════════════════════════════════════════════
+
+\part{Every Concept Explained in Detail}
+
+\section{Exploratory Data Analysis (EDA)}
+
+\begin{conceptbox}
+    EDA means \textbf{looking at your data using graphs and statistics} before building any model. The goal is to understand the data, find patterns, and spot problems.
+\end{conceptbox}
+
+\subsection{What You Did in EDA}
+\begin{enumerate}
+    \item \textbf{Price Distribution}: You drew a histogram of ticket prices. You found that most tickets cost between 3,000--10,000 INR, with Business class tickets being much more expensive.
+    \item \textbf{Airline vs Price}: You used box plots to compare airlines. Vistara and Air India have higher median prices because they offer Business class.
+    \item \textbf{Days Left vs Price}: This was the most interesting finding. You discovered that \textbf{prices shoot up dramatically when booked less than 5 days before departure}. Booking 40+ days early saves thousands of Rupees.
+    \item \textbf{Duration vs Price}: Longer flights cost more, which makes intuitive sense.
+    \item \textbf{Stops vs Price}: Flights with more stops tend to be cheaper (because they take longer).
+\end{enumerate}
+
+\begin{warnbox}
+    \textbf{Q: What insights did you get from EDA?} \\
+    A: ``The biggest insight was that \texttt{days\_left} (how early you book) has the strongest impact on ticket price. Booking last-minute costs significantly more. Also, Business class tickets are 3--5x more expensive than Economy. Flight duration and number of stops also affect price.''
+\end{warnbox}
+
+\subsection{Libraries Used for EDA}
+\begin{itemize}
+    \item \textbf{Matplotlib}: The foundational Python plotting library. Used for histograms, scatter plots, and line charts.
+    \item \textbf{Seaborn}: Built on top of Matplotlib. Makes statistical plots like box plots, violin plots, heatmaps look beautiful with fewer lines of code.
+\end{itemize}
+
+
+\section{Data Preprocessing}
+
+\begin{conceptbox}
+    Preprocessing means \textbf{cleaning and transforming raw data} so that a machine learning model can understand it. Models only understand numbers — they cannot read text like ``Vistara'' or ``Delhi''.
+\end{conceptbox}
+
+\subsection{Step 1: Handling Missing Values}
+\begin{lstlisting}
+df.dropna(inplace=True)
+\end{lstlisting}
+\textbf{What this does}: Checks every row. If any row has a blank (empty) cell, that row is deleted. In your dataset, there were no missing values, so nothing was actually removed.
+
+\subsection{Step 2: Dropping Irrelevant Columns}
+\begin{lstlisting}
+df.drop('flight', axis=1, inplace=True)
+\end{lstlisting}
+\textbf{What this does}: The \texttt{flight} column contains the flight code (like ``6E-123''). There are 1,561 unique codes — too many to be useful. Including them would confuse the model rather than help it. So you removed it.
+
+\begin{warnbox}
+    \textbf{Q: Why did you drop the flight column?} \\
+    A: ``The flight column had 1,561 unique values. Including it would cause extreme high dimensionality without adding predictive value, because flight codes don't have a meaningful pattern related to price.''
+\end{warnbox}
+
+\subsection{Step 3: Encoding Categorical Variables}
+
+Machine Learning models \textbf{only understand numbers}. But your dataset has text columns like ``Vistara'', ``Delhi'', ``Morning''. You need to convert them.
+
+\subsubsection{Label/Ordinal Encoding}
+Used when the text has a \textbf{natural order}:
+\begin{lstlisting}
+# Stops have order: zero < one < two_or_more
+stops_map = {'zero': 0, 'one': 1, 'two_or_more': 2}
+df['stops'] = df['stops'].map(stops_map)
+
+# Class: Economy < Business
+df['class'] = df['class'].map({'Economy': 0, 'Business': 1})
+
+# Time of day has order
+time_map = {'Early_Morning': 0, 'Morning': 1, 'Afternoon': 2,
+            'Evening': 3, 'Night': 4, 'Late_Night': 5}
+\end{lstlisting}
+
+\textbf{Why ordinal?} Because ``two\_or\_more'' stops is genuinely \textit{more} than ``one'' stop. The number 2 > 1 > 0 captures this relationship.
+
+\subsubsection{One-Hot Encoding}
+Used when text has \textbf{NO natural order}:
+\begin{lstlisting}
+df = pd.get_dummies(df, columns=['airline', 'source_city',
+                    'destination_city'], drop_first=True, dtype=int)
+\end{lstlisting}
+
+\begin{conceptbox}
+    \textbf{One-Hot Encoding} creates a new column for each unique value. For example, if there are 6 airlines, it creates 5 new columns (one is dropped to avoid the ``dummy variable trap''). Each row gets a 1 in the column matching its airline, and 0s everywhere else.
+
+    \vspace{0.3cm}
+    Example: If the original data has \texttt{airline = Vistara}, then after encoding:
+
+    \vspace{0.2cm}
+    \texttt{airline\_Vistara = 1, airline\_Indigo = 0, airline\_AirIndia = 0, ...}
+\end{conceptbox}
+
+\begin{warnbox}
+    \textbf{Q: What is the dummy variable trap? Why did you use \texttt{drop\_first=True}?} \\
+    A: ``If I have 6 airlines and create 6 binary columns, the 6th column is perfectly predictable from the other 5 (if all are 0, it must be the 6th airline). This creates \textit{multicollinearity} which confuses Linear Regression. So I drop the first category, using only 5 columns to represent 6 airlines.''
+\end{warnbox}
+
+
+\subsection{Step 4: Outlier Removal using IQR}
+
+\begin{conceptbox}
+    An \textbf{outlier} is an extreme, unrealistic value. For example, a flight ticket costing 1,00,000 INR when most cost 5,000--15,000 INR. Outliers can badly mislead the model.
+
+    \vspace{0.3cm}
+    \textbf{IQR (Interquartile Range)} is a statistical method to find outliers:
+    \begin{align}
+        Q1 &= \text{25th percentile (25\% of data falls below this)} \\
+        Q3 &= \text{75th percentile (75\% of data falls below this)} \\
+        IQR &= Q3 - Q1 \\
+        \text{Lower Bound} &= Q1 - 1.5 \times IQR \\
+        \text{Upper Bound} &= Q3 + 1.5 \times IQR
+    \end{align}
+    Any data point outside these bounds is considered an outlier and is removed.
+\end{conceptbox}
+
+\begin{lstlisting}
+Q1 = df['price'].quantile(0.25)
+Q3 = df['price'].quantile(0.75)
+IQR = Q3 - Q1
+lower_bound = Q1 - 1.5 * IQR
+upper_bound = Q3 + 1.5 * IQR
+df = df[(df['price'] >= lower_bound) & (df['price'] <= upper_bound)]
+\end{lstlisting}
+
+\begin{warnbox}
+    \textbf{Q: Why did you use IQR for outlier removal? Why not just remove values above a fixed number?} \\
+    A: ``IQR is a \textit{statistical} method that adapts to the data's own distribution. A fixed threshold is arbitrary and doesn't account for skewness. The IQR method uses the data's own quartiles to define what is normal and what is extreme, making it robust and data-driven.''
+\end{warnbox}
+
+
+\subsection{Step 5: Train-Test Split}
+
+\begin{lstlisting}
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.20, random_state=42)
+\end{lstlisting}
+
+\begin{conceptbox}
+    You split the data into two parts:
+    \begin{itemize}
+        \item \textbf{Training set (80\%)}: The model learns from this data.
+        \item \textbf{Testing set (20\%)}: This is kept hidden from the model. After training, you test the model on this unseen data to see how well it performs in the real world.
+    \end{itemize}
+    \texttt{random\_state=42} ensures the split is reproducible — you get the same split every time you run the code.
+\end{conceptbox}
+
+\begin{warnbox}
+    \textbf{Q: Why did you split the data? Why 80-20?} \\
+    A: ``If I train and test on the same data, the model will memorize the answers instead of learning patterns. This is called \textit{overfitting}. The 80-20 split is a standard ratio that gives the model enough data to learn from while keeping enough aside for honest evaluation.''
+\end{warnbox}
+
+
+\subsection{Step 6: Feature Scaling (StandardScaler)}
+
+\begin{lstlisting}
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+\end{lstlisting}
+
+\begin{conceptbox}
+    \textbf{StandardScaler} transforms each feature so that it has a \textbf{mean of 0 and standard deviation of 1}. The formula is:
+    \[
+        z = \frac{x - \mu}{\sigma}
+    \]
+    where $x$ is the original value, $\mu$ is the mean, and $\sigma$ is the standard deviation.
+
+    \vspace{0.3cm}
+    \textbf{Why?} Without scaling, a feature like \texttt{days\_left} (range: 1--49) would be dominated by \texttt{price} (range: 1,000--50,000) in distance-based algorithms like SVR.
+\end{conceptbox}
+
+\begin{warnbox}
+    \textbf{Q: Why did you use \texttt{fit\_transform} on training data but only \texttt{transform} on test data?} \\
+    A: ``\texttt{fit\_transform} learns the mean and standard deviation from the training data and then applies the transformation. On test data, I only use \texttt{transform} — I apply the \textit{same} mean and standard deviation that was learned from training data. If I re-fit on test data, I would be leaking information from the test set, which is called \textit{data leakage}.''
+\end{warnbox}
+
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{The Five Machine Learning Algorithms}
+
+\subsection{Algorithm 1: Linear Regression (Baseline)}
+
+\begin{conceptbox}
+    The simplest algorithm. It tries to draw a \textbf{straight line} (or hyperplane in multiple dimensions) through the data.
+    \[
+        \hat{y} = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_n x_n
+    \]
+    where $\hat{y}$ is the predicted price, $x_1, x_2, \ldots$ are features (days left, duration, etc.), and $\beta_0, \beta_1, \ldots$ are the ``weights'' the model learns.
+\end{conceptbox}
+
+\textbf{Your result}: R$^2$ = 0.9112 (91.12\%). Decent but not great because airline pricing is \textit{non-linear} — a straight line cannot capture the complex curves.
+
+\subsection{Algorithm 2: Decision Tree Regressor}
+
+\begin{conceptbox}
+    A Decision Tree asks a series of \textbf{Yes/No questions} to narrow down the prediction:
+
+    \begin{verbatim}
+    Is class == Business?
+       YES --> Is days_left < 5?
+                  YES --> Price = 25,000
+                  NO  --> Price = 15,000
+       NO  --> Is airline == Vistara?
+                  YES --> Price = 8,000
+                  NO  --> Price = 4,500
+    \end{verbatim}
+
+    It builds a tree-like structure by splitting the data at each node based on the feature that reduces prediction error the most.
+\end{conceptbox}
+
+\textbf{Your code}:
+\begin{lstlisting}
+dt = DecisionTreeRegressor(max_depth=20, min_samples_split=10,
+                           random_state=42)
+\end{lstlisting}
+
+\begin{itemize}
+    \item \texttt{max\_depth=20}: The tree can go 20 levels deep (20 questions).
+    \item \texttt{min\_samples\_split=10}: A node must have at least 10 data points before it can be split further. This prevents overfitting.
+\end{itemize}
+
+\textbf{Your result}: R$^2$ = 0.9804 (98.04\%). Much better than Linear Regression because it can capture non-linear patterns.
+
+
+\subsection{Algorithm 3: Random Forest Regressor (YOUR BEST MODEL)}
+
+\begin{conceptbox}
+    \textbf{Random Forest = A ``forest'' of many Decision Trees.}
+
+    Instead of building one tree, it builds \textbf{200 trees} (in your case), each trained on a random subset of the data. Then it takes the \textbf{average} of all 200 predictions. This is called \textbf{Bagging} (Bootstrap Aggregation).
+
+    \vspace{0.3cm}
+    \textbf{Why is it better than one tree?}
+    A single Decision Tree can easily \textit{overfit} — it memorizes the training data noise. By averaging 200 different trees, the random errors cancel out, giving a much more stable and accurate prediction.
+\end{conceptbox}
+
+\begin{lstlisting}
+rf = RandomForestRegressor(n_estimators=200, max_depth=20,
+                           min_samples_split=5, n_jobs=-1,
+                           random_state=42)
+\end{lstlisting}
+
+\begin{itemize}
+    \item \texttt{n\_estimators=200}: Build 200 individual decision trees.
+    \item \texttt{max\_depth=20}: Each tree can be 20 levels deep.
+    \item \texttt{min\_samples\_split=5}: Minimum 5 samples to split a node.
+    \item \texttt{n\_jobs=-1}: Use all CPU cores for parallel training (speed).
+\end{itemize}
+
+\textbf{Your result}: R$^2$ = \textbf{0.9856} (98.56\%), MAE = \textbf{1,250 INR}. The absolute best performer.
+
+\begin{warnbox}
+    \textbf{Q: Why did Random Forest perform the best?} \\
+    A: ``Airline pricing involves complex, non-linear interactions between many features — class, airline, booking timing, duration, and stops all interact together. Random Forest is an ensemble of 200 decision trees, each learning from a random subset of data. By averaging their predictions, it reduces overfitting and captures these complex patterns far better than a single model. Linear Regression failed because it can only model straight-line relationships.''
+\end{warnbox}
+
+
+\subsection{Algorithm 4: XGBoost (Extreme Gradient Boosting)}
+
+\begin{conceptbox}
+    XGBoost is another ensemble method, but it uses \textbf{Boosting} instead of Bagging.
+
+    \textbf{Bagging} (Random Forest): Build 200 trees independently in parallel, then average.
+
+    \textbf{Boosting} (XGBoost): Build trees \textit{one after another}. Each new tree focuses specifically on the mistakes of the previous tree. It is ``boosting'' the weak spots.
+\end{conceptbox}
+
+\begin{lstlisting}
+xgb = XGBRegressor(n_estimators=300, max_depth=8, learning_rate=0.1,
+                   subsample=0.8, colsample_bytree=0.8,
+                   random_state=42, verbosity=0)
+\end{lstlisting}
+
+\begin{itemize}
+    \item \texttt{n\_estimators=300}: 300 sequential boosting rounds.
+    \item \texttt{learning\_rate=0.1}: How much each new tree contributes. Smaller = more conservative but more stable.
+    \item \texttt{subsample=0.8}: Each tree uses 80\% of the data (prevents overfitting).
+    \item \texttt{colsample\_bytree=0.8}: Each tree uses 80\% of the features.
+\end{itemize}
+
+\textbf{Your result}: R$^2$ = 0.9837 (98.37\%). Extremely close to Random Forest but slightly lower.
+
+\begin{warnbox}
+    \textbf{Q: What is the difference between Bagging and Boosting?} \\
+    A: ``Bagging trains multiple trees independently in parallel and averages their output — this reduces variance. Boosting trains trees sequentially, where each new tree corrects the errors of the previous one — this reduces bias. Random Forest uses Bagging; XGBoost uses Boosting.''
+\end{warnbox}
+
+
+\subsection{Algorithm 5: Support Vector Regressor (SVR)}
+
+\begin{conceptbox}
+    SVR tries to find a hyperplane that fits the data within a certain margin (epsilon tube). It uses a mathematical trick called the \textbf{kernel trick} to handle non-linear data.
+
+    You used the \textbf{RBF (Radial Basis Function)} kernel, which maps the data into a higher-dimensional space where it can find patterns.
+\end{conceptbox}
+
+\begin{lstlisting}
+svr = SVR(kernel='rbf', C=100, epsilon=0.1, gamma='scale')
+\end{lstlisting}
+
+\textbf{Your result}: R$^2$ = 0.6931 (69.31\%). The worst performer. SVR struggles with large datasets because its training time complexity is $O(n^2)$ to $O(n^3)$. You had to use only 10,000 samples (out of 300,000) just to make it run in reasonable time.
+
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Evaluation Metrics — Your Model's Report Card}
+
+\subsection{Mean Absolute Error (MAE)}
+\[
+    MAE = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|
+\]
+\textbf{In simple terms}: On average, how many Rupees was your prediction wrong by? Take each prediction, find the difference from the actual price, ignore the sign (absolute value), and average them all.
+
+\textbf{Your best}: Random Forest MAE = \textbf{INR 1,250}. On average, your model's price guess is off by only 1,250 Rupees.
+
+\subsection{Root Mean Squared Error (RMSE)}
+\[
+    RMSE = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2}
+\]
+\textbf{In simple terms}: Similar to MAE, but it \textbf{punishes large mistakes more heavily} because the errors are squared before averaging. So if one prediction is off by 10,000 INR, that error gets amplified.
+
+\textbf{Your best}: Random Forest RMSE = \textbf{INR 2,707}.
+
+\subsection{R-Squared ($R^2$) Score}
+\[
+    R^2 = 1 - \frac{\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}{\sum_{i=1}^{n}(y_i - \bar{y})^2}
+\]
+\textbf{In simple terms}: A score between 0 and 1 (or 0\% to 100\%) that tells you how much of the ``variance'' in ticket prices your model explains.
+\begin{itemize}
+    \item $R^2 = 1.0$ (100\%): Perfect prediction.
+    \item $R^2 = 0.0$ (0\%): Model is as good as just guessing the average price every time.
+    \item $R^2 < 0$: Model is worse than guessing the average (terrible).
+\end{itemize}
+
+\textbf{Your best}: Random Forest $R^2$ = \textbf{0.9856} (98.56\%). This is excellent — your model explains 98.56\% of all the variation in ticket prices.
+
+\begin{warnbox}
+    \textbf{Q: Explain R-squared in your own words.} \\
+    A: ``R-squared tells me what percentage of the variation in flight prices my model can explain. My Random Forest has R-squared of 98.56\%, meaning it captures almost all the pricing patterns. Only 1.44\% of the price variation is unexplained — that could be due to random promotions or flash sales that aren't in the dataset.''
+\end{warnbox}
+
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Feature Importance}
+
+\begin{conceptbox}
+    After training a Random Forest, you can ask it: ``Which features did you find most useful for predicting the price?'' This is called \textbf{Feature Importance}.
+
+    Each feature gets a score between 0 and 1. Higher score = more important for predicting price.
+\end{conceptbox}
+
+Your model found that the most important features were:
+\begin{enumerate}
+    \item \textbf{class} (Economy vs Business) — The single biggest price driver.
+    \item \textbf{days\_left} — How early you book matters enormously.
+    \item \textbf{duration} — Longer flights cost more.
+    \item \textbf{stops} — Non-stop flights are pricier.
+    \item \textbf{Airline-specific features} — Which airline you choose affects price.
+\end{enumerate}
+
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{K-Means Clustering (Unsupervised Learning)}
+
+\begin{conceptbox}
+    K-Means is an \textbf{unsupervised} algorithm — it finds hidden groups in the data \textit{without} being told what to look for. You asked it to divide all flights into 4 groups (clusters) based on their features.
+\end{conceptbox}
+
+\textbf{How K-Means works}:
+\begin{enumerate}
+    \item Randomly pick 4 points as ``cluster centers.''
+    \item Assign each flight to the nearest cluster center.
+    \item Move each cluster center to the average of all flights assigned to it.
+    \item Repeat steps 2--3 until the centers stop moving.
+\end{enumerate}
+
+\textbf{How you chose K=4}: You used the \textbf{Elbow Method} — you plotted ``inertia'' (how spread out the clusters are) for K=2 to K=10 and looked for the ``elbow'' where the improvement flattens out. That happened around K=4.
+
+\begin{warnbox}
+    \textbf{Q: Why did you also do clustering if your project is regression?} \\
+    A: ``Clustering was used as an additional unsupervised analysis step to segment flights into natural market segments — for example, cheap Economy short flights vs expensive Business long-haul flights. It provides business insights beyond just price prediction.''
+\end{warnbox}
+
+
+% ════════════════════════════════════════════════════════════════════════════
+% PART 3: FLASK WEB APPLICATION
+% ════════════════════════════════════════════════════════════════════════════
+
+\part{Flask Web Application — The Deployment}
+
+\section{What is Flask?}
+
+\begin{conceptbox}
+    \textbf{Flask} is a lightweight Python web framework. It lets you create a website that runs Python code in the background. When a user fills a form on the webpage and clicks ``Predict'', Flask receives that data, feeds it to your trained model, gets the prediction, and sends the result back to the browser.
+\end{conceptbox}
+
+\section{How Your \texttt{app.py} Works — Line by Line}
+
+\subsection{Step 1: Loading the Saved Model}
+\begin{lstlisting}
+model = joblib.load('saved_models/best_model.pkl')
+scaler = joblib.load('saved_models/scaler.pkl')
+feature_names = joblib.load('saved_models/feature_names.pkl')
+\end{lstlisting}
+
+\textbf{What this does}: During training, you saved three things using \texttt{joblib}:
+\begin{itemize}
+    \item \texttt{best\_model.pkl}: Your trained Random Forest model (all 200 trees, serialized into a file).
+    \item \texttt{scaler.pkl}: The StandardScaler with the mean/std it learned during training.
+    \item \texttt{feature\_names.pkl}: The list of 21 feature column names after encoding.
+\end{itemize}
+When Flask starts, it loads these into memory so it's ready to predict instantly.
+
+\subsection{Step 2: The Home Route}
+\begin{lstlisting}
+@app.route('/')
+def home():
+    return render_template('index.html')
+\end{lstlisting}
+\textbf{What this does}: When someone visits \texttt{http://localhost:5000/}, Flask shows them the \texttt{index.html} page (your beautiful flight booking form).
+
+\subsection{Step 3: The Prediction Route}
+\begin{lstlisting}
+@app.route('/predict', methods=['POST'])
+def predict():
+    airline = request.form['airline']
+    source = request.form['source_city']
+    # ... other form fields ...
+
+    # Build feature vector with all 21 columns set to 0
+    sample = pd.DataFrame(0, index=[0], columns=feature_names)
+    sample['stops'] = stops
+    sample['class'] = ticket_class
+    sample['duration'] = duration
+    sample['days_left'] = days_left
+
+    # Set the correct One-Hot column to 1
+    airline_col = f"airline_{airline}"
+    if airline_col in feature_names:
+        sample[airline_col] = 1
+
+    # Get prediction
+    predicted_price = model.predict(sample)[0]
+    return jsonify({'predicted_price': round(predicted_price, 2)})
+\end{lstlisting}
+
+\begin{codewalkbox}
+    \textbf{Step-by-step what happens when you click ``Predict'':}
+    \begin{enumerate}
+        \item The HTML form sends the user's inputs (airline, cities, dates, etc.) to the \texttt{/predict} URL using a POST request.
+        \item Flask reads each input from the form using \texttt{request.form['airline']}, etc.
+        \item It creates a blank row with all 21 feature columns set to 0.
+        \item It fills in the numerical values (stops, class, duration, days\_left).
+        \item It finds the correct One-Hot column (e.g., \texttt{airline\_Vistara}) and sets it to 1.
+        \item It calls \texttt{model.predict(sample)} — the Random Forest runs all 200 trees, averages them, and returns the predicted price.
+        \item Flask sends the predicted price back to the browser as JSON data.
+        \item The JavaScript on the page reads the JSON and displays the price.
+    \end{enumerate}
+\end{codewalkbox}
+
+\begin{warnbox}
+    \textbf{Q: What is \texttt{joblib}? Why not just use the model directly?} \\
+    A: ``Training the Random Forest model takes several minutes and uses a lot of data. \texttt{joblib} serializes (saves) the fully trained model to a file. The Flask app then loads this pre-trained model in seconds, so it doesn't need to re-train every time the server starts.''
+\end{warnbox}
+
+
+% ════════════════════════════════════════════════════════════════════════════
+% PART 4: THE COMPLETE PYTHON LIBRARIES
+% ════════════════════════════════════════════════════════════════════════════
+
+\part{Every Python Library You Used}
+
+\begin{center}
+\begin{tabular}{|l|l|p{7cm}|}
+    \hline
+    \textbf{Library} & \textbf{Purpose} & \textbf{What It Does in Your Project} \\
+    \hline
+    Pandas & Data handling & Loads the CSV file, creates DataFrames, applies encoding, drops columns \\
+    \hline
+    NumPy & Math operations & Array operations, random seeds, square root for RMSE \\
+    \hline
+    Matplotlib & Plotting & Creates histograms, line charts, scatter plots, bar charts \\
+    \hline
+    Seaborn & Statistical plots & Creates box plots, violin plots, heatmaps, KDE plots \\
+    \hline
+    Scikit-learn & ML framework & Train-test split, StandardScaler, all models (LR, DT, RF, SVR), metrics (MAE, RMSE, R2), K-Means, PCA \\
+    \hline
+    XGBoost & Boosting model & Provides the XGBRegressor algorithm \\
+    \hline
+    Joblib & Model saving & Saves/loads the trained model, scaler, feature names \\
+    \hline
+    Flask & Web framework & Creates the web server, handles routes, serves HTML \\
+    \hline
+\end{tabular}
+\end{center}
+
+
+% ════════════════════════════════════════════════════════════════════════════
+% PART 5: COMPLETE VIVA Q&A
+% ════════════════════════════════════════════════════════════════════════════
+
+\part{Complete Viva Questions \& Answers (25 Questions)}
+
+\begin{enumerate}[leftmargin=*, label=\textbf{Q\arabic*.}]
+
+\item \textbf{What is your project about?}
+\begin{tipbox}[title=Answer]
+    ``My project predicts domestic flight ticket prices in India using Machine Learning. I used a Kaggle dataset of 300,153 records, performed EDA and preprocessing, trained five regression models, and found that Random Forest achieved the best R-squared of 98.56\%. I deployed it as a web app using Flask.''
+\end{tipbox}
+
+\item \textbf{Why did you choose this problem?}
+\begin{tipbox}[title=Answer]
+    ``Flight prices in India are extremely dynamic and unpredictable for passengers. Building a prediction model helps users estimate costs in advance and plan their travel budget better.''
+\end{tipbox}
+
+\item \textbf{What type of ML problem is this?}
+\begin{tipbox}[title=Answer]
+    ``It is a Supervised Learning Regression problem because I am predicting a continuous numerical value — the ticket price in INR.''
+\end{tipbox}
+
+\item \textbf{What dataset did you use?}
+\begin{tipbox}[title=Answer]
+    ``I used the Flight Price Prediction dataset from Kaggle, created by Shubham Bathwal. It contains 300,153 records with 12 features including airline name, source and destination cities, flight duration, number of stops, class, and days left until departure.''
+\end{tipbox}
+
+\item \textbf{How did you handle missing values?}
+\begin{tipbox}[title=Answer]
+    ``I checked for missing values using \texttt{df.isnull().sum()}. Fortunately, this dataset had no missing values. If there were any, I would have either dropped those rows or imputed them using the mean or median.''
+\end{tipbox}
+
+\item \textbf{What is EDA and why is it important?}
+\begin{tipbox}[title=Answer]
+    ``EDA stands for Exploratory Data Analysis. It is the process of visualizing and summarizing the data before modeling. It helps me understand the distribution, identify correlations, spot outliers, and gain insights that guide preprocessing decisions.''
+\end{tipbox}
+
+\item \textbf{What encoding techniques did you use?}
+\begin{tipbox}[title=Answer]
+    ``I used two types. Ordinal encoding for features with a natural order — stops (zero, one, two\_or\_more) and class (Economy, Business). And One-Hot Encoding for nominal features with no order — airline name, source city, and destination city.''
+\end{tipbox}
+
+\item \textbf{Why did you remove outliers?}
+\begin{tipbox}[title=Answer]
+    ``Outliers are extreme values that can skew the model's learning. I used the IQR method to identify and remove them. This ensures the model learns from the majority distribution rather than being distorted by rare, extreme ticket prices.''
+\end{tipbox}
+
+\item \textbf{What is the IQR method formula?}
+\begin{tipbox}[title=Answer]
+    ``IQR equals Q3 minus Q1, where Q1 is the 25th percentile and Q3 is the 75th percentile. Lower bound is Q1 minus 1.5 times IQR, and upper bound is Q3 plus 1.5 times IQR. Anything outside these bounds is an outlier.''
+\end{tipbox}
+
+\item \textbf{What train-test split ratio did you use?}
+\begin{tipbox}[title=Answer]
+    ``80\% training and 20\% testing. This gives the model enough data to learn patterns while keeping sufficient unseen data for honest evaluation.''
+\end{tipbox}
+
+\item \textbf{How many algorithms did you try?}
+\begin{tipbox}[title=Answer]
+    ``I trained and compared 5 regression algorithms: Linear Regression as a baseline, Decision Tree, Random Forest, XGBoost, and Support Vector Regressor. I also performed K-Means Clustering as an unsupervised analysis.''
+\end{tipbox}
+
+\item \textbf{Which model performed best and why?}
+\begin{tipbox}[title=Answer]
+    ``Random Forest performed the best with an R-squared of 98.56\% and MAE of only 1,250 INR. It outperformed others because airline pricing involves complex non-linear interactions between features. As an ensemble of 200 decision trees, Random Forest captures these patterns while averaging out overfitting noise.''
+\end{tipbox}
+
+\item \textbf{What is the difference between Random Forest and XGBoost?}
+\begin{tipbox}[title=Answer]
+    ``Both are ensemble methods but use different strategies. Random Forest uses Bagging — it trains trees independently in parallel and averages their predictions. XGBoost uses Boosting — it trains trees sequentially where each new tree corrects the errors of the previous one.''
+\end{tipbox}
+
+\item \textbf{Why did SVR perform poorly?}
+\begin{tipbox}[title=Answer]
+    ``SVR has a training time complexity of O(n-squared) to O(n-cubed), making it impractical for large datasets. I could only use 10,000 out of 300,000 samples for training, which severely limited its learning capacity.''
+\end{tipbox}
+
+\item \textbf{What is overfitting?}
+\begin{tipbox}[title=Answer]
+    ``Overfitting is when a model memorizes the training data instead of learning general patterns. It performs extremely well on training data but poorly on new, unseen data. I prevented this by using train-test splitting, limiting tree depth, and using ensemble methods.''
+\end{tipbox}
+
+\item \textbf{What is Flask?}
+\begin{tipbox}[title=Answer]
+    ``Flask is a lightweight Python web framework that allows me to create web applications. I used it to build a user-facing website where users can input flight details and receive a price prediction from the trained model.''
+\end{tipbox}
+
+\item \textbf{How does your Flask app work?}
+\begin{tipbox}[title=Answer]
+    ``When the server starts, it loads the pre-trained Random Forest model using joblib. When a user fills the form and clicks Predict, Flask receives the input via a POST request, constructs the feature vector with proper encoding, passes it to the model, and returns the predicted price as JSON to the frontend.''
+\end{tipbox}
+
+\item \textbf{What is joblib?}
+\begin{tipbox}[title=Answer]
+    ``Joblib is a Python library for serialization — saving Python objects to disk. I used it to save my trained model, the scaler, and the feature names so that Flask can load them instantly without re-training.''
+\end{tipbox}
+
+\item \textbf{What is StandardScaler?}
+\begin{tipbox}[title=Answer]
+    ``StandardScaler transforms features to have zero mean and unit variance using the formula z equals x minus mean divided by standard deviation. This ensures all features contribute equally to the model, especially important for distance-based algorithms like SVR.''
+\end{tipbox}
+
+\item \textbf{What is the correlation heatmap?}
+\begin{tipbox}[title=Answer]
+    ``A correlation heatmap shows how strongly each pair of features are linearly related, with values from -1 to +1. In my project, it revealed that flight class, days left, and duration have the highest correlation with ticket price.''
+\end{tipbox}
+
+\item \textbf{What is PCA and why did you use it?}
+\begin{tipbox}[title=Answer]
+    ``PCA stands for Principal Component Analysis. It reduces high-dimensional data to 2 or 3 dimensions for visualization. I used it to plot my K-Means clusters on a 2D chart so they could be visually inspected.''
+\end{tipbox}
+
+\item \textbf{What challenges did you face?}
+\begin{tipbox}[title=Answer]
+    ``Three main challenges: First, training ensemble models on 300,000 rows required significant computation time. Second, One-Hot Encoding of airlines and cities increased the number of features substantially. Third, integrating the model into Flask required careful reconstruction of the feature vector to match the exact format the model was trained on.''
+\end{tipbox}
+
+\item \textbf{What are the future improvements?}
+\begin{tipbox}[title=Answer]
+    ``I could integrate real-time airline APIs for live data, deploy the app on cloud platforms like AWS or Heroku for public access, try deep learning models like Neural Networks, and build a mobile application for broader accessibility.''
+\end{tipbox}
+
+\item \textbf{What is the practical use of your project?}
+\begin{tipbox}[title=Answer]
+    ``Passengers can use it to estimate how much their ticket will cost, helping them decide when to book. Airlines can use the feature importance analysis to understand which factors drive pricing the most.''
+\end{tipbox}
+
+\item \textbf{If you had more time, what would you change?}
+\begin{tipbox}[title=Answer]
+    ``I would perform hyperparameter tuning using Grid Search or Random Search to find the optimal model parameters. I would also try neural network architectures and add more features like holidays, seasonal trends, and fuel prices.''
+\end{tipbox}
+
+\end{enumerate}
+
+
+% ════════════════════════════════════════════════════════════════════════════
+% PART 6: RESULTS SUMMARY TABLE
+% ════════════════════════════════════════════════════════════════════════════
+
+\part{Final Results Summary}
+
+\begin{center}
+\Large
+\begin{tabular}{|l|r|r|r|}
+    \hline
+    \textbf{Algorithm} & \textbf{MAE (INR)} & \textbf{RMSE (INR)} & \textbf{R$^2$ Score} \\
+    \hline
+    \textbf{Random Forest} & \textbf{1,250} & \textbf{2,707} & \textbf{0.9856} \\
+    XGBoost & 1,599 & 2,880 & 0.9837 \\
+    Decision Tree & 1,372 & 3,159 & 0.9804 \\
+    Linear Regression & 4,476 & 6,731 & 0.9112 \\
+    SVR (RBF) & 7,419 & 12,514 & 0.6931 \\
+    \hline
+\end{tabular}
+\end{center}
+
+\vspace{1cm}
+\begin{center}
+    \fbox{\parbox{0.8\textwidth}{
+        \centering \Large \textbf{You are ready. Go ace your Viva! All the best, Karthik!} \\[0.3cm]
+        \normalsize Remember: Speak confidently, explain in simple terms, \\
+        and always connect your answer back to your project.
+    }}
+\end{center}
+
+\end{document}
