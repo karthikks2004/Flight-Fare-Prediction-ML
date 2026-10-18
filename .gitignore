@@ -45,3 +45,38 @@ venv.bak/
 # OS temporary files
 .DS_Store
 Thumbs.db
+
+# Exclude local study guides, scripts, drafts, and prompts
+Viva_Study_Guide*
+Complete_Deep_Dive_Study_Guide*
+Full_Conversation_History*
+FareScope_Presentation_Prompt*
+START_WEBSITE.bat
+website.html
+Project Report Template.pdf
+Gmail - Project Submission Guidelines*
+convert_pdf.py
+create_polished_presentation.py
+create_presentation.py
+create_report.py
+export_pdf.ps1
+improve_plots.py
+parse_transcript.py
+plots/plots/
+
+# Exclude older report draft versions (keep only final submission doc)
+ICFOSS_Project_Report.docx
+ICFOSS_Project_Report.tex
+ICFOSS_Project_Report_Absolute_Final.docx
+ICFOSS_Project_Report_Detailed.docx
+ICFOSS_Project_Report_Final.docx
+ICFOSS_Project_Report_Final_Polished.docx
+ICFOSS_Project_Report_Final_Ready.docx
+ICFOSS_Project_Report_Final_V12.docx
+ICFOSS_Project_Report_Final_V14.docx
+ICFOSS_Project_Report_Final_V7.docx
+ICFOSS_Project_Report_Final_V9.docx
+ICFOSS_Project_Report_Karthik.docx
+ICFOSS_Project_Report_Perfect.docx
+ICFOSS_Project_Report_V3.docx
+Flight_Fare_Prediction_Report.tex
